@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: ubuntu:20.04
+
+%setup
+	mkdir ${SINGULARITY_ROOTFS}/home/app
+	mkdir ${SINGULARITY_ROOTFS}/home/app/data
+	mkdir ${SINGULARITY_ROOTFS}/home/app/data/train
+
+%files
+	train.sh /home/app
+	requirements.txt /home/app
+	data/train/* /home/app/data/train/
+
+%post
+	apt update
+	apt install -y python3 pip
+	pip3 install --upgrade pip
+	apt install -y git
+	git clone https://github.com/huggingface/diffusers.git
+	pip3 install -r /home/app/requirements.txt
+
+%environment
+	export PYTHONPATH=$PWD
+
+%runscript
+	exec /home/app/train.sh

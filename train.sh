@@ -1,12 +1,10 @@
 #! /bin/bash
 
-git clone https://github.com/huggingface/diffusers.git
-pip install -r requirements.txt
-
-
 export MODEL_NAME="CompVis/stable-diffusion-v1-4"
-export TRAIN_DIR="data/train"
+export TRAIN_DIR="/home/app/data/train"
 export OUTPUT_DIR="generativeAAC"
+
+ls $TRAIN_DIR
 
 accelerate launch diffusers/examples/text_to_image/train_text_to_image.py \
   --pretrained_model_name_or_path=$MODEL_NAME \
