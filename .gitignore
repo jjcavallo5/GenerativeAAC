@@ -1,4 +1,7 @@
 data/
 venv/
+.venv/
 diffusers/
 *.sif
+*.png
+images/
