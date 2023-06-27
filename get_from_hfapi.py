@@ -31,6 +31,9 @@ def query(prompt):
 
     payload = {
         "inputs": prompt,
+        "options": {
+            "use_cache": False
+        }
     }
 
     response = requests.post(API_URL, headers=headers, json=payload)
@@ -38,8 +41,9 @@ def query(prompt):
         print("Waiting for model to load...")
         payload = {
             "inputs": prompt,
-            "parameters": {
-                "wait_for_model": True
+            "options": {
+                "wait_for_model": True,
+                "use_cache": False
             }
         }
         response = requests.post(API_URL, headers=headers, json=payload)
