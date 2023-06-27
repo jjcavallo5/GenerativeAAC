@@ -4,7 +4,6 @@ venv/
 .venv/
 diffusers/
 *.sif
-./*.png
+*.png
 
-# Do Not Remove
 config.py
