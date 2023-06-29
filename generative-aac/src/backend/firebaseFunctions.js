@@ -35,7 +35,6 @@ export const loginUser = (email, pass) => {
 
     const auth = getAuth(app);
 
-    console.log(firebaseConfig);
     signInWithEmailAndPassword(auth, email, pass)
         .then((userCredential) => {
             // Signed in
