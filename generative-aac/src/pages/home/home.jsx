@@ -4,14 +4,27 @@ import styles from './home.module.css';
 import { getHFImage } from "../../backend/huggingFaceFunctions";
 import GAACImage from "../../components/GAACImage/GAACImage";
 import { getCurrentUserEmail, isUserLoggedIn } from "../../backend/authFunctions";
+import { getSavedQueries } from "../../backend/firestoreFunctions";
+import { onAuthStateChanged, getAuth } from "firebase/auth";
+
 
 function HomePage() {
     const [prompt, setPrompt] = useState('')
     const [fromHF, setFromHF] = useState(null)
     const [loading, setLoading] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [previousQueries, setPreviousQueries] = useState([])
 
     const ref = useRef(null)
+
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            setIsLoggedIn(true)
+        } else {
+            setIsLoggedIn(false)
+        }
+    });
     
     const checkKey = e => {
         if (e.key === 'Enter') {
@@ -20,40 +33,78 @@ function HomePage() {
     }
 
     const handlePromptSubmission = async () => {
-        setPrompt('')
         setLoading(true)
 
         let response = await getHFImage(prompt);
-        
+
         setLoading(false)
         setFromHF({
             url: URL.createObjectURL(response),
-            blob: response
+            blob: response,
+            prompt: prompt
         })
-        
+        setPrompt('')
     }
 
     useEffect(() => {
-        isUserLoggedIn() ? setIsLoggedIn(true) : setIsLoggedIn(false)
-    }, [])
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("True")
+                setIsLoggedIn(true)
+            } else {
+                console.log("False")
+
+                setIsLoggedIn(false)
+            }
+        });
+
+        if (isLoggedIn) {
+            getSavedQueries().then(queries => setPreviousQueries(queries))
+        }
+    },[isLoggedIn])
+
+    const QueryList = () => {
+        return (
+            <div className={styles.oldQueryList}>
+                <div className={styles.oldQueriesHeaderContainer}>
+                    <p className={styles.oldQueriesHeader}>Previous</p>
+                </div>
+                {previousQueries.map((query, i) => {
+                    return (
+                        <div key={i} className={styles.queryContainer}>
+                            <span className={styles.previousQueries}>{query.prompt}</span>
+                        </div>
+                    );
+                })}
+            </div>
+        )
+    }
 
     return (
         <div className={styles.pageContainer}>
             <div className={styles.sidebar}>
                 {/* List of old queries */}
 
-                {isLoggedIn ? null : 
+                {isLoggedIn ? <QueryList /> : 
                 <p className={styles.notLoggedIn}>Log in to save prompts</p>
                 }
-
-                <div className={styles.account}>
-                    <Link to="/login" style={{textDecoration: 'none'}}>
-                        <span className={styles.login}>Log in</span>
-                    </Link>
-                    <Link to="/register" style={{textDecoration: 'none'}}>
-                        <span className={styles.register}>Sign Up</span>
-                    </Link>
-                </div>
+                
+                {!isLoggedIn ?
+                    <div className={styles.account}>
+                        <Link to="/login" style={{textDecoration: 'none'}}>
+                            <span className={styles.login}>Log in</span>
+                        </Link>
+                        <Link to="/register" style={{textDecoration: 'none'}}>
+                            <span className={styles.register}>Sign Up</span>
+                        </Link>
+                    </div>
+                :
+                    <div className={styles.account}>
+                        <div className={styles.queryContainer} onClick={() => auth.signOut()}>
+                            <span>Account Settings</span>
+                        </div>
+                    </div>
+                }
             </div>
             <div className={styles.content} ref={ref}>
                 {fromHF == null ?
@@ -65,7 +116,7 @@ function HomePage() {
                 {loading ? <span>Loading...</span> : null}
                 {fromHF != null ? 
                 <div className={styles.imgContainer}>
-                    <GAACImage blob={fromHF.blob} src={fromHF.url}/> 
+                    <GAACImage blob={fromHF.blob} src={fromHF.url} prompt={fromHF.prompt}/> 
                 </div>
                 : null}
                 <div className={styles.promptContainer}>

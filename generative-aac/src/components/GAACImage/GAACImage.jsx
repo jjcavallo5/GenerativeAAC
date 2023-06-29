@@ -5,7 +5,7 @@ import { pushImageToList } from '../../backend/firestoreFunctions';
 
 const GAACImage = props => {
     const handleSave = () => {
-        uploadBlob(props.blob).then(url => pushImageToList(url))
+        uploadBlob(props.blob).then(url => pushImageToList(url, props.prompt))
     }
 
     return (

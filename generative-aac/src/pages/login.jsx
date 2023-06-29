@@ -7,8 +7,8 @@ function LoginPage() {
     const [pass, setPass] = useState("");
     const navigate = useNavigate()
 
-    const handleLogin = () => {
-        loginUser(user, pass)
+    const handleLogin = async () => {
+        await loginUser(user, pass)
         navigate('/')
     }
 

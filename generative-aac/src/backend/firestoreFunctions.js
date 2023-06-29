@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore"; 
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore"; 
 import { getCurrentUserEmail } from './authFunctions';
 
 const firebaseConfig = require('./firebaseCredentials.json')
@@ -12,11 +12,25 @@ export const createNewUser = async email => {
     })
 }
 
-export const pushImageToList = (url) => {
-    let userEmail = getCurrentUserEmail();
+export const pushImageToList = (url, prompt, user) => {
+    let userEmail = user.email;
     let docRef = doc(db, 'users', userEmail);
+    let objectToPush = {
+        url: url,
+        prompt: prompt
+    }
 
     updateDoc(docRef, {
-        imageURLs: arrayUnion(url)
+        imageURLs: arrayUnion(objectToPush)
     }).then(snap => console.log("Added image"))
+}
+
+export const getSavedQueries = async () => {
+    let userEmail = getCurrentUserEmail()
+    console.log(userEmail)
+
+    const docRef = doc(db, "users", userEmail);
+    const docSnap = await getDoc(docRef);
+
+    return docSnap.get('imageURLs')
 }

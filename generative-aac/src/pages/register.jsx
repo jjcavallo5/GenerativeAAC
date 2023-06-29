@@ -10,13 +10,13 @@ function RegistrationPage() {
 
     const navigate = useNavigate()
 
-    const handleRegistration = () => {
+    const handleRegistration = async () => {
         if (pass !== confirmPass) {
             setErrorMessage("Passwords do not match")
             return
         }
 
-        registerUser(email, pass)
+        await registerUser(email, pass)
 
         navigate('/')
     }
