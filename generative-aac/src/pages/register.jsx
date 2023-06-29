@@ -1,10 +1,25 @@
 import { useState } from "react";
-import { registerUser } from "../backend/firebaseFunctions";
+import { registerUser } from "../backend/authFunctions";
+import { useNavigate } from "react-router-dom";
 
 function RegistrationPage() {
     const [email, setEmail] = useState("");
     const [pass, setPass] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
+    const [errorMessage, setErrorMessage] = useState('')
+
+    const navigate = useNavigate()
+
+    const handleRegistration = () => {
+        if (pass !== confirmPass) {
+            setErrorMessage("Passwords do not match")
+            return
+        }
+
+        registerUser(email, pass)
+
+        navigate('/')
+    }
 
     return (
         <div className="App">
@@ -39,7 +54,7 @@ function RegistrationPage() {
                 <input
                     type="submit"
                     value="Register"
-                    onClick={() => registerUser(email, pass)}
+                    onClick={() => handleRegistration()}
                 />
             </div>
         </div>

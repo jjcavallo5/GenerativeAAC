@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { loginUser } from "../backend/firebaseFunctions";
+import { loginUser } from "../backend/authFunctions";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const [user, setUser] = useState("");
     const [pass, setPass] = useState("");
+    const navigate = useNavigate()
+
+    const handleLogin = () => {
+        loginUser(user, pass)
+        navigate('/')
+    }
 
     return (
         <div className="App">
@@ -26,7 +33,7 @@ function LoginPage() {
                     onChange={(e) => setPass(e.target.value)}
                     value={pass}
                 />
-                <input type="submit" value="Login" onClick={() => loginUser(user, pass)} />
+                <input type="submit" value="Login" onClick={() => handleLogin()} />
             </div>
         </div>
     );

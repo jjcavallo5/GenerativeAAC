@@ -28,3 +28,11 @@
     background-color: var(--accent);
 }
 
+.save {
+    font-size: 0.8rem;
+    color: #ebebf088;
+}
+
+.save:hover {
+    cursor: pointer;
+}

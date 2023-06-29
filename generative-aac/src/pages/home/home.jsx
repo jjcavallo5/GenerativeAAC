@@ -1,13 +1,16 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { Link } from "react-router-dom";
 import styles from './home.module.css';
 import { getHFImage } from "../../backend/huggingFaceFunctions";
 import GAACImage from "../../components/GAACImage/GAACImage";
+import { getCurrentUserEmail, isUserLoggedIn } from "../../backend/authFunctions";
 
 function HomePage() {
     const [prompt, setPrompt] = useState('')
-    const [img, setImg] = useState(null)
+    const [fromHF, setFromHF] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+
     const ref = useRef(null)
     
     const checkKey = e => {
@@ -23,14 +26,25 @@ function HomePage() {
         let response = await getHFImage(prompt);
         
         setLoading(false)
-        setImg(URL.createObjectURL(response))
+        setFromHF({
+            url: URL.createObjectURL(response),
+            blob: response
+        })
         
     }
+
+    useEffect(() => {
+        isUserLoggedIn() ? setIsLoggedIn(true) : setIsLoggedIn(false)
+    }, [])
 
     return (
         <div className={styles.pageContainer}>
             <div className={styles.sidebar}>
                 {/* List of old queries */}
+
+                {isLoggedIn ? null : 
+                <p className={styles.notLoggedIn}>Log in to save prompts</p>
+                }
 
                 <div className={styles.account}>
                     <Link to="/login" style={{textDecoration: 'none'}}>
@@ -42,16 +56,16 @@ function HomePage() {
                 </div>
             </div>
             <div className={styles.content} ref={ref}>
-                {img == null ?
+                {fromHF == null ?
                     <div className={styles.welcome}>
                         <h1>Generative AAC</h1>
                         <p>Jeremy Cavallo</p>
                     </div> : null
                 }
                 {loading ? <span>Loading...</span> : null}
-                {img != null ? 
+                {fromHF != null ? 
                 <div className={styles.imgContainer}>
-                    <GAACImage src={img} /> 
+                    <GAACImage blob={fromHF.blob} src={fromHF.url}/> 
                 </div>
                 : null}
                 <div className={styles.promptContainer}>

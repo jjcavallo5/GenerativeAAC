@@ -12,6 +12,11 @@
     padding: 0.5rem;
 }
 
+.notLoggedIn {
+    color: #ebebf088;
+    text-align: center;
+}
+
 .account {
     position: absolute;
     bottom: 0;
