@@ -1,0 +1,104 @@
+.pageContainer {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+}
+
+.sidebar {
+    position: relative;
+    background-color: var(--dark);
+    width: 14rem;
+    padding: 0.5rem;
+}
+
+.account {
+    position: absolute;
+    bottom: 0;
+    border-top: 1px solid var(--text);
+    left: 50%;
+    transform: translateX(-50%);
+    height: 5rem;
+    width: 90%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem
+}
+
+.account .login {
+    padding: 8px 30px 8px 30px;
+    border-radius: 10px;
+    background-color: var(--background);
+    color: var(--text);
+}
+
+.account .login:hover {
+    cursor: pointer;
+    background-color: rgb(255, 0, 106);
+    color: #000;
+}
+
+.account .register {
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.content {
+    background-color: var(--background);
+    width: calc(100vw - 12rem);
+    color: var(--text);
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    position: relative;
+}
+
+.welcome {
+    margin: 10rem;
+}
+
+.promptContainer {
+    position: absolute;
+    bottom: 0;
+    padding: 1rem;
+}
+
+.promptBar {
+    position: relative;
+}
+
+.prompt {
+    padding: 1.3rem;
+    width: 600px;
+    background-color: var(--background);
+    border-radius: 10px;
+    /* border: 1px solid var(--text); */
+    border: none;
+
+    outline: none;
+    box-shadow: 0 0 20px #1a1919 ;
+    font-size: 16px;
+    font-family: Söhne,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,Helvetica Neue,Arial,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+    color: var(--text)
+}
+
+.submitSvg {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+}
+
+.submitSvg:hover {
+    cursor: pointer;
+}
+
+.promptContainer p {
+    font-size: 0.7rem;
+    color: var(--text);
+}
