@@ -62,6 +62,19 @@
     margin: 10rem;
 }
 
+.imgContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 90%;
+}
+
+.loadedImage {
+    height: 200px;
+    aspect-ratio: 1;
+}
+
 .promptContainer {
     position: absolute;
     bottom: 0;
