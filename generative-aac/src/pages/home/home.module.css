@@ -151,9 +151,10 @@
     font-size: 0.8rem;
 }
 
-.content {
+.content, 
+.contentFullWidth {
     background-color: var(--background);
-    width: calc(100vw - 12rem);
+    width: calc(100vw - 15rem);
     color: var(--text);
     
     display: flex;
@@ -164,8 +165,31 @@
     position: relative;
 }
 
+.contentFullWidth {
+    width: 100vw;
+}
+
+.toggleSidebar {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    height: 10px;
+    width: 10px;
+    background-color: red;
+}
+
+.toggleSidebarClose {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    height: 10px;
+    width: 10px;
+    background-color: red;
+    z-index: 2;
+}
+
 .welcome {
-    margin: 10rem;
+    margin: 10rem 0 0 0;
     letter-spacing: -0.5px;
 }
 
@@ -186,15 +210,18 @@
     position: absolute;
     bottom: 0;
     padding: 1rem;
+    width: 90%;
+    max-width: 600px;
 }
 
 .promptBar {
     position: relative;
+    width: 100%;
 }
 
 .prompt {
     padding: 1.3rem;
-    width: 600px;
+    width: calc(100% - 2.6rem);
     background-color: var(--background);
     border-radius: 10px;
     border: none;
@@ -220,4 +247,19 @@
 .promptContainer p {
     font-size: 0.7rem;
     color: var(--text);
+}
+
+@media only screen and (max-width: 520px)  {
+    .content {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .sidebar {
+        width: calc(100% - 1rem);
+        height: calc(100% - 1rem);
+        overflow: hidden;
+        position: absolute;
+        z-index: 1;
+    }
 }

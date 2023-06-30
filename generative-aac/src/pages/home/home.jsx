@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import { Link } from "react-router-dom";
 import styles from './home.module.css';
 import { getHFImage } from "../../backend/huggingFaceFunctions";
@@ -17,7 +17,18 @@ function HomePage() {
     const [previousQueries, setPreviousQueries] = useState([])
     const [selectedQuery, setSelectedQuery] = useState('')
 
+    const windowSize = useRef(window.innerWidth);
     const [navOverlayShown, setNavOverlayShown] = useState(false)
+    const [collapsedSidebar, setCollapsedSidebar] = useState(
+        windowSize.current < 520 ? true : false
+    )
+
+    const handleWindowResize = () => {
+        if (window.innerWidth < 520)
+            setCollapsedSidebar(true)
+        else setCollapsedSidebar(false)
+    }
+    window.addEventListener('resize', handleWindowResize)
     const auth = getAuth();
     
     const checkKey = e => {
@@ -122,49 +133,63 @@ function HomePage() {
 
     return (
         <div className={styles.pageContainer} onClick={() => setNavOverlayShown(false)}>
-            <div className={styles.sidebar}>
-                {/* List of old queries */}
+            {console.log()}
+            {collapsedSidebar ? null :
+                <div className={styles.sidebar}>
+                    {!collapsedSidebar &&
+                        <div className={styles.toggleSidebarClose} onClick={() => setCollapsedSidebar(true)}>
+                        </div>
+                    }
+                    {/* List of old queries */}
 
-                {isLoggedIn ? <QueryList /> : 
-                <p className={styles.notLoggedIn}>Log in to save prompts</p>
-                }
-                {navOverlayShown &&
-                    <div className={styles.navModal}>
-                        <div className={styles.navModalLink}>
-                            <span>About</span>
+                    {isLoggedIn ? <QueryList /> : 
+                    <p className={styles.notLoggedIn}>Log in to save prompts</p>
+                    }
+                    {navOverlayShown &&
+                        <div className={styles.navModal}>
+                            <div className={styles.navModalLink}>
+                                <span>About</span>
+                            </div>
+                            <div className={styles.navModalLink}>
+                                <span>Pricing</span>
+                            </div>
+                            <div className={styles.addBreak}></div>
+                            <div className={styles.navModalLink}>
+                                <span>Log out</span>
+                            </div>
                         </div>
-                        <div className={styles.navModalLink}>
-                            <span>Pricing</span>
+                    }
+                    
+                    {!isLoggedIn ?
+                        <div className={styles.account}>
+                            <Link to="/login" style={{textDecoration: 'none'}}>
+                                <span className={styles.login}>Log in</span>
+                            </Link>
+                            <Link to="/register" style={{textDecoration: 'none'}}>
+                                <span className={styles.register}>Sign Up</span>
+                            </Link>
                         </div>
-                        <div className={styles.addBreak}></div>
-                        <div className={styles.navModalLink}>
-                            <span>Log out</span>
+                    :
+                        <div className={styles.account}>
+                            <div className={styles.queryContainer} onClick={(e) => {
+                                e.stopPropagation()
+                                setNavOverlayShown(true)
+                            }}>
+                                <span>Account Settings</span>
+                            </div>
                         </div>
+                    }
+                </div>
+            }
+
+            <div className={
+                !collapsedSidebar ? styles.content : styles.contentFullWidth
+            } >
+                {collapsedSidebar &&
+                    <div className={styles.toggleSidebar} onClick={() => setCollapsedSidebar(false)}>
                     </div>
                 }
-                
-                {!isLoggedIn ?
-                    <div className={styles.account}>
-                        <Link to="/login" style={{textDecoration: 'none'}}>
-                            <span className={styles.login}>Log in</span>
-                        </Link>
-                        <Link to="/register" style={{textDecoration: 'none'}}>
-                            <span className={styles.register}>Sign Up</span>
-                        </Link>
-                    </div>
-                :
-                    <div className={styles.account}>
-                        <div className={styles.queryContainer} onClick={(e) => {
-                            e.stopPropagation()
-                            setNavOverlayShown(true)
-                        }}>
-                            <span>Account Settings</span>
-                        </div>
-                    </div>
-                }
-            </div>
-            <div className={styles.content} >
-                {console.log(selectedQuery, fromHF)}
+
                 {(fromHF === '' && selectedQuery === '') ?
                     <div className={styles.welcome}>
                         <h1>Generative AAC</h1>
