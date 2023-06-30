@@ -7,20 +7,11 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export const registerUser = async (email, pass) => {
-    try {
-        await createUserWithEmailAndPassword(auth, email, pass)
-    } catch(err) {
-        console.error(err)
-    }
+    await createUserWithEmailAndPassword(auth, email, pass)
 };
 
 export const loginUser = async (email, pass) => {
-    try{
-        await signInWithEmailAndPassword(auth, email, pass)
-    } catch(err) {
-        console.error(err)
-    }
-
+    await signInWithEmailAndPassword(auth, email, pass)
 };
 
 export const getCurrentUserEmail = () => {

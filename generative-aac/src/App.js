@@ -2,8 +2,8 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/home/home";
-import LoginPage from "./pages/login";
-import RegistrationPage from "./pages/register";
+import LoginPage from "./pages/login/login";
+import RegistrationPage from "./pages/login/register";
 
 function App() {
     return (
