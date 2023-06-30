@@ -12,7 +12,11 @@ const GAACImage = props => {
         <div className={styles.container}>
             <img src={props.src} className={styles.loadedImage}/>
             <a className={styles.download} href={props.src} download={'generativeAAC'}>Download</a>
-            <span className={styles.save} onClick={() => handleSave()}>Save to cloud</span>        
+            {props.loadedFromCloud ? 
+                <span className={styles.saved} >Saved to cloud</span> 
+                :
+                <span className={styles.save} onClick={() => handleSave()}>Save to cloud</span> 
+            }      
         </div>
     );
 }

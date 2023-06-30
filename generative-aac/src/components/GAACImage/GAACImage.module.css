@@ -28,9 +28,13 @@
     background-color: var(--accent);
 }
 
-.save {
+.save, .saved {
     font-size: 0.8rem;
     color: #ebebf088;
+}
+
+.saved:hover{
+    cursor:default;
 }
 
 .save:hover {

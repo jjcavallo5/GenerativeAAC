@@ -14,29 +14,20 @@ function HomePage() {
     const [loading, setLoading] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [previousQueries, setPreviousQueries] = useState([])
-
-    const ref = useRef(null)
-
+    const [selectedQuery, setSelectedQuery] = useState(null)
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            setIsLoggedIn(true)
-        } else {
-            setIsLoggedIn(false)
-        }
-    });
     
     const checkKey = e => {
         if (e.key === 'Enter') {
             handlePromptSubmission();
         }
     }
-
+    
     const handlePromptSubmission = async () => {
         setLoading(true)
-
+        
         let response = await getHFImage(prompt);
-
+        
         setLoading(false)
         setFromHF({
             url: URL.createObjectURL(response),
@@ -46,6 +37,10 @@ function HomePage() {
         setPrompt('')
     }
 
+    const handleOldQuerySelection = query => {
+        setSelectedQuery(query.url)
+    }
+    
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -53,7 +48,7 @@ function HomePage() {
                 setIsLoggedIn(true)
             } else {
                 console.log("False")
-
+                
                 setIsLoggedIn(false)
             }
         });
@@ -62,7 +57,7 @@ function HomePage() {
             getSavedQueries().then(queries => setPreviousQueries(queries))
         }
     },[isLoggedIn])
-
+    
     const QueryList = () => {
         return (
             <div className={styles.oldQueryList}>
@@ -71,7 +66,7 @@ function HomePage() {
                 </div>
                 {previousQueries.map((query, i) => {
                     return (
-                        <div key={i} className={styles.queryContainer}>
+                        <div key={i} className={styles.queryContainer} onClick={() => handleOldQuerySelection(query)}>
                             <span className={styles.previousQueries}>{query.prompt}</span>
                         </div>
                     );
@@ -106,8 +101,8 @@ function HomePage() {
                     </div>
                 }
             </div>
-            <div className={styles.content} ref={ref}>
-                {fromHF == null ?
+            <div className={styles.content} >
+                {(fromHF == null && selectedQuery == null) ?
                     <div className={styles.welcome}>
                         <h1>Generative AAC</h1>
                         <p>Jeremy Cavallo</p>
@@ -119,6 +114,12 @@ function HomePage() {
                     <GAACImage blob={fromHF.blob} src={fromHF.url} prompt={fromHF.prompt}/> 
                 </div>
                 : null}
+
+                {selectedQuery && 
+                <div className={styles.imgContainer}>
+                    <GAACImage src={selectedQuery} loadedFromCloud={true}/>
+                </div>
+                }
                 <div className={styles.promptContainer}>
                     <div className={styles.promptBar}>
                         <input type="text" className={styles.prompt} placeholder="Enter a prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => checkKey(e)}/>

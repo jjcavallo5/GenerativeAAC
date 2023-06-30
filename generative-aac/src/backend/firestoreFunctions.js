@@ -12,8 +12,8 @@ export const createNewUser = async email => {
     })
 }
 
-export const pushImageToList = (url, prompt, user) => {
-    let userEmail = user.email;
+export const pushImageToList = (url, prompt) => {
+    let userEmail = getCurrentUserEmail();
     let docRef = doc(db, 'users', userEmail);
     let objectToPush = {
         url: url,
