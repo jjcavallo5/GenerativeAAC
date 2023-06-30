@@ -5,8 +5,11 @@ import { getHFImage } from "../../backend/huggingFaceFunctions";
 import GAACImage from "../../components/GAACImage/GAACImage";
 import { getSavedQueries, deleteImageFromList } from "../../backend/firestoreFunctions";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import IconTrash from "../../icons/trash";
 import { deleteImage } from "../../backend/storageFunctions";
+
+import IconTrash from "../../icons/trash";
+import IconMenuFold from "../../icons/menuFold";
+import IconMenuUnfold from "../../icons/menuUnfold";
 
 
 function HomePage() {
@@ -60,6 +63,7 @@ function HomePage() {
     const handleOldQuerySelection = query => {
         setFromHF('')
         setSelectedQuery(query.url)
+        setCollapsedSidebar(true)
     }
 
     const pushImgToPreviousQueries = (url, prompt) => {
@@ -138,6 +142,8 @@ function HomePage() {
                 <div className={styles.sidebar}>
                     {!collapsedSidebar &&
                         <div className={styles.toggleSidebarClose} onClick={() => setCollapsedSidebar(true)}>
+                            <IconMenuFold className={styles.toggleMenuIcon} onClick={() => setCollapsedSidebar(false)}/>
+
                         </div>
                     }
                     {/* List of old queries */}
@@ -154,7 +160,7 @@ function HomePage() {
                                 <span>Pricing</span>
                             </div>
                             <div className={styles.addBreak}></div>
-                            <div className={styles.navModalLink}>
+                            <div className={styles.navModalLink} onClick={() => auth.signOut()}>
                                 <span>Log out</span>
                             </div>
                         </div>
@@ -186,7 +192,8 @@ function HomePage() {
                 !collapsedSidebar ? styles.content : styles.contentFullWidth
             } >
                 {collapsedSidebar &&
-                    <div className={styles.toggleSidebar} onClick={() => setCollapsedSidebar(false)}>
+                    <div className={styles.toggleSidebar} >
+                        <IconMenuUnfold className={styles.toggleMenuIcon} onClick={() => setCollapsedSidebar(false)}/>
                     </div>
                 }
 
@@ -199,8 +206,7 @@ function HomePage() {
                 {loading && <span>Loading...</span>}
                 {(fromHF !== '') &&
                     <div className={styles.imgContainer}>
-
-                        <GAACImage blob={fromHF.blob} src={fromHF.url} prompt={fromHF.prompt} saveCallback={(url) => pushImgToPreviousQueries(url, fromHF.prompt)}/> 
+                        <GAACImage blob={fromHF.blob} src={fromHF.url} prompt={fromHF.prompt} saveCallback={(url) => pushImgToPreviousQueries(url, fromHF.prompt)} isLoggedIn={isLoggedIn}/>
                     </div>
                 }
 

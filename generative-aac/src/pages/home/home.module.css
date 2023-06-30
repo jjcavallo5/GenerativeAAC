@@ -15,6 +15,7 @@
 .notLoggedIn {
     color: #ebebf088;
     text-align: center;
+    margin-top: 3rem;
 }
 
 .oldQueriesHeaderContainer {
@@ -173,19 +174,23 @@
     position: absolute;
     top: 1rem;
     left: 1rem;
-    height: 10px;
-    width: 10px;
-    background-color: red;
 }
 
 .toggleSidebarClose {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    height: 10px;
-    width: 10px;
-    background-color: red;
     z-index: 2;
+}
+
+.toggleMenuIcon {
+    height: 30px;
+    width: 30px;
+    color: var(--text)
+}
+
+.toggleMenuIcon:hover {
+    cursor: pointer;
 }
 
 .welcome {
