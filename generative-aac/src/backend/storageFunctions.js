@@ -12,7 +12,11 @@ export const uploadBlob = async blob => {
 
     const uploadRef = ref(storage, `images/${path}.jpeg`);
 
-    await uploadBytes(uploadRef, blob);
+    try {
+        await uploadBytes(uploadRef, blob);
+    } catch(error) {
+        console.error(error)
+    }
     
     return await getDownloadURL(uploadRef)
 }

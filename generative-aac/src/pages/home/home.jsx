@@ -16,6 +16,8 @@ function HomePage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [previousQueries, setPreviousQueries] = useState([])
     const [selectedQuery, setSelectedQuery] = useState('')
+
+    const [navOverlayShown, setNavOverlayShown] = useState(false)
     const auth = getAuth();
     
     const checkKey = e => {
@@ -101,8 +103,12 @@ function HomePage() {
                     <p className={styles.oldQueriesHeader}>Previous</p>
                 </div>
                 {previousQueries.map((query, i) => {
+                    let containerClassName = styles.queryContainer
+                    if (selectedQuery === query.url)
+                        containerClassName = styles.queryContainer + ' ' + styles.queryContainerSelected
+                    
                     return (
-                        <div key={i} className={styles.queryContainer} onClick={() => handleOldQuerySelection(query)}>
+                        <div key={i} className={containerClassName} onClick={() => handleOldQuerySelection(query)}>
                             <div className={styles.queryTextContainer}>
                                 <span className={styles.previousQueries}>{query.prompt}</span>
                             </div>
@@ -115,12 +121,26 @@ function HomePage() {
     }
 
     return (
-        <div className={styles.pageContainer}>
+        <div className={styles.pageContainer} onClick={() => setNavOverlayShown(false)}>
             <div className={styles.sidebar}>
                 {/* List of old queries */}
 
                 {isLoggedIn ? <QueryList /> : 
                 <p className={styles.notLoggedIn}>Log in to save prompts</p>
+                }
+                {navOverlayShown &&
+                    <div className={styles.navModal}>
+                        <div className={styles.navModalLink}>
+                            <span>About</span>
+                        </div>
+                        <div className={styles.navModalLink}>
+                            <span>Pricing</span>
+                        </div>
+                        <div className={styles.addBreak}></div>
+                        <div className={styles.navModalLink}>
+                            <span>Log out</span>
+                        </div>
+                    </div>
                 }
                 
                 {!isLoggedIn ?
@@ -134,7 +154,10 @@ function HomePage() {
                     </div>
                 :
                     <div className={styles.account}>
-                        <div className={styles.queryContainer} onClick={() => auth.signOut()}>
+                        <div className={styles.queryContainer} onClick={(e) => {
+                            e.stopPropagation()
+                            setNavOverlayShown(true)
+                        }}>
                             <span>Account Settings</span>
                         </div>
                     </div>
