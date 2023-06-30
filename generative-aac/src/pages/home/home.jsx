@@ -49,10 +49,10 @@ function HomePage() {
         setSelectedQuery(query.url)
     }
 
-    const pushImgToPreviousQueries = fromHFObj => {
+    const pushImgToPreviousQueries = (url, prompt) => {
         let toPush = {
-            url: fromHFObj.url,
-            prompt: fromHFObj.prompt
+            url: url,
+            prompt: prompt
         }
         setPreviousQueries([toPush, ...previousQueries])
     }
@@ -152,7 +152,7 @@ function HomePage() {
                 {(fromHF !== '') &&
                     <div className={styles.imgContainer}>
 
-                        <GAACImage blob={fromHF.blob} src={fromHF.url} prompt={fromHF.prompt} saveCallback={() => pushImgToPreviousQueries(fromHF)}/> 
+                        <GAACImage blob={fromHF.blob} src={fromHF.url} prompt={fromHF.prompt} saveCallback={(url) => pushImgToPreviousQueries(url, fromHF.prompt)}/> 
                     </div>
                 }
 

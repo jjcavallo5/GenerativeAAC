@@ -7,9 +7,11 @@ const GAACImage = props => {
     const [saved, setSaved] = useState(props.loadedFromCloud)
 
     const handleSave = async () => {
-        await uploadBlob(props.blob).then(url => pushImageToList(url, props.prompt))
-        props.saveCallback()
-        setSaved(true)
+        await uploadBlob(props.blob).then(url =>{ 
+            pushImageToList(url, props.prompt)
+            props.saveCallback(url)
+            setSaved(true)
+        })
     }
 
     return (
