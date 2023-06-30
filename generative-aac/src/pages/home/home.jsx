@@ -63,7 +63,8 @@ function HomePage() {
     const handleOldQuerySelection = query => {
         setFromHF('')
         setSelectedQuery(query.url)
-        setCollapsedSidebar(true)
+        if (window.innerWidth < 520)
+            setCollapsedSidebar(true)
     }
 
     const pushImgToPreviousQueries = (url, prompt) => {
@@ -160,7 +161,10 @@ function HomePage() {
                                 <span>Pricing</span>
                             </div>
                             <div className={styles.addBreak}></div>
-                            <div className={styles.navModalLink} onClick={() => auth.signOut()}>
+                            <div className={styles.navModalLink} onClick={() => {
+                                    auth.signOut()
+                                    resetToHomeState()
+                                }}>
                                 <span>Log out</span>
                             </div>
                         </div>
@@ -212,7 +216,7 @@ function HomePage() {
 
                 {(selectedQuery !== '') && 
                 <div className={styles.imgContainer}>
-                    <GAACImage src={selectedQuery} loadedFromCloud={true} />
+                    <GAACImage src={selectedQuery} loadedFromCloud={true} isLoggedIn={isLoggedIn}/>
                 </div>
                 }
                 <div className={styles.promptContainer}>
