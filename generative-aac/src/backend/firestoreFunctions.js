@@ -40,8 +40,7 @@ export const deleteImageFromList = (url, prompt) => {
 
 export const getSavedQueries = async () => {
     let userEmail = getCurrentUserEmail()
-    console.log(userEmail)
-
+    
     const docRef = doc(db, "users", userEmail);
     const docSnap = await getDoc(docRef);
 

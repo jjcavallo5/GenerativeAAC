@@ -8,6 +8,7 @@ const auth = getAuth(app);
 
 export const registerUser = async (email, pass) => {
     await createUserWithEmailAndPassword(auth, email, pass)
+    await createNewUser(email)
 };
 
 export const loginUser = async (email, pass) => {

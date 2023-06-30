@@ -108,7 +108,7 @@ function HomePage() {
         });
 
         if (isLoggedIn) {
-            getSavedQueries().then(queries => setPreviousQueries(queries))
+            getSavedQueries().then(queries => setPreviousQueries(queries)).catch(error => console.error(error))
         }
     },[auth, isLoggedIn])
     
