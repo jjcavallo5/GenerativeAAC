@@ -1,20 +1,21 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import styles from './home.module.css';
 import { getHFImage } from "../../backend/huggingFaceFunctions";
 import GAACImage from "../../components/GAACImage/GAACImage";
-import { getCurrentUserEmail, isUserLoggedIn } from "../../backend/authFunctions";
-import { getSavedQueries } from "../../backend/firestoreFunctions";
+import { getSavedQueries, deleteImageFromList } from "../../backend/firestoreFunctions";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
+import IconTrash from "../../icons/trash";
+import { deleteImage } from "../../backend/storageFunctions";
 
 
 function HomePage() {
     const [prompt, setPrompt] = useState('')
-    const [fromHF, setFromHF] = useState(null)
+    const [fromHF, setFromHF] = useState('')
     const [loading, setLoading] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [previousQueries, setPreviousQueries] = useState([])
-    const [selectedQuery, setSelectedQuery] = useState(null)
+    const [selectedQuery, setSelectedQuery] = useState('')
     const auth = getAuth();
     
     const checkKey = e => {
@@ -25,6 +26,7 @@ function HomePage() {
     
     const handlePromptSubmission = async () => {
         setLoading(true)
+        resetToHomeState()
         
         let response = await getHFImage(prompt);
         
@@ -37,8 +39,42 @@ function HomePage() {
         setPrompt('')
     }
 
+    const resetToHomeState = () => {
+        setSelectedQuery('')
+        setFromHF('')
+    }
+
     const handleOldQuerySelection = query => {
+        setFromHF('')
         setSelectedQuery(query.url)
+    }
+
+    const pushImgToPreviousQueries = fromHFObj => {
+        let toPush = {
+            url: fromHFObj.url,
+            prompt: fromHFObj.prompt
+        }
+        setPreviousQueries([toPush, ...previousQueries])
+    }
+
+    const handleDeleteOldQuery = (event, query) => {
+        event.stopPropagation();
+        console.log(selectedQuery , query.url)
+       
+        deleteImageFromList(query.url, query.prompt)
+        deleteImage(query.url)
+
+        let newQueryList = previousQueries.filter(q => {
+            return q.url !== query.url
+        })
+        
+        console.log(selectedQuery, fromHF, "JO")
+        setPreviousQueries(newQueryList)
+
+        if (selectedQuery === query.url) {
+            console.log("asdfasdf")
+            resetToHomeState()
+        }
     }
     
     useEffect(() => {
@@ -56,7 +92,7 @@ function HomePage() {
         if (isLoggedIn) {
             getSavedQueries().then(queries => setPreviousQueries(queries))
         }
-    },[isLoggedIn])
+    },[auth, isLoggedIn])
     
     const QueryList = () => {
         return (
@@ -67,7 +103,10 @@ function HomePage() {
                 {previousQueries.map((query, i) => {
                     return (
                         <div key={i} className={styles.queryContainer} onClick={() => handleOldQuerySelection(query)}>
-                            <span className={styles.previousQueries}>{query.prompt}</span>
+                            <div className={styles.queryTextContainer}>
+                                <span className={styles.previousQueries}>{query.prompt}</span>
+                            </div>
+                            <IconTrash className={styles.trashIcon} onClick={(e) => {handleDeleteOldQuery(e, query)}}/>
                         </div>
                     );
                 })}
@@ -102,22 +141,24 @@ function HomePage() {
                 }
             </div>
             <div className={styles.content} >
-                {(fromHF == null && selectedQuery == null) ?
+                {console.log(selectedQuery, fromHF)}
+                {(fromHF === '' && selectedQuery === '') ?
                     <div className={styles.welcome}>
                         <h1>Generative AAC</h1>
                         <p>Jeremy Cavallo</p>
                     </div> : null
                 }
-                {loading ? <span>Loading...</span> : null}
-                {fromHF != null ? 
-                <div className={styles.imgContainer}>
-                    <GAACImage blob={fromHF.blob} src={fromHF.url} prompt={fromHF.prompt}/> 
-                </div>
-                : null}
+                {loading && <span>Loading...</span>}
+                {(fromHF !== '') &&
+                    <div className={styles.imgContainer}>
 
-                {selectedQuery && 
+                        <GAACImage blob={fromHF.blob} src={fromHF.url} prompt={fromHF.prompt} saveCallback={() => pushImgToPreviousQueries(fromHF)}/> 
+                    </div>
+                }
+
+                {(selectedQuery !== '') && 
                 <div className={styles.imgContainer}>
-                    <GAACImage src={selectedQuery} loadedFromCloud={true}/>
+                    <GAACImage src={selectedQuery} loadedFromCloud={true} />
                 </div>
                 }
                 <div className={styles.promptContainer}>

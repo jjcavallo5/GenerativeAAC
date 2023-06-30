@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 const firebaseConfig = require('./firebaseCredentials.json')
 
@@ -15,4 +15,12 @@ export const uploadBlob = async blob => {
     await uploadBytes(uploadRef, blob);
     
     return await getDownloadURL(uploadRef)
+}
+
+export const deleteImage = url => {
+    const deleteRef = ref(storage, url)
+
+    deleteObject(deleteRef)
+        .then(() => console.log("Deleted image"))
+        .catch(err => console.error("An error occured"))
 }

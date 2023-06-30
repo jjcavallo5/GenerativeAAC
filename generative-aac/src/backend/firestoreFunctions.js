@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore"; 
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore"; 
 import { getCurrentUserEmail } from './authFunctions';
 
 const firebaseConfig = require('./firebaseCredentials.json')
@@ -25,6 +25,19 @@ export const pushImageToList = (url, prompt) => {
     }).then(snap => console.log("Added image"))
 }
 
+export const deleteImageFromList = (url, prompt) => {
+    let userEmail = getCurrentUserEmail();
+    let docRef = doc(db, 'users', userEmail);
+    let objectToRemove = {
+        url: url,
+        prompt: prompt
+    }
+
+    updateDoc(docRef, {
+        imageURLs: arrayRemove(objectToRemove)
+    }).then(snap => console.log("Removed image"))
+}
+
 export const getSavedQueries = async () => {
     let userEmail = getCurrentUserEmail()
     console.log(userEmail)
@@ -32,5 +45,5 @@ export const getSavedQueries = async () => {
     const docRef = doc(db, "users", userEmail);
     const docSnap = await getDoc(docRef);
 
-    return docSnap.get('imageURLs')
+    return docSnap.get('imageURLs').reverse()
 }

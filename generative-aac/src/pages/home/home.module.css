@@ -46,18 +46,35 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    position: relative;
 }
 
-.previousQueries {
-
-    text-align: left;
+.queryTextContainer {
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
 }
 
 .queryContainer:hover {
     background-color: var(--background);
     cursor: pointer;
+}
+
+.trashIcon {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.queryContainer:hover .trashIcon {
+    display: flex;
+}
+
+.queryContainer:hover .queryTextContainer {
+    width: 90%;
 }
 
 .account {
