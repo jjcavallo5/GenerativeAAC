@@ -6,8 +6,8 @@ import GAACImage from "../../components/GAACImage/GAACImage";
 import { getSavedQueries, deleteImageFromList } from "../../backend/firestoreFunctions";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { deleteImage } from "../../backend/storageFunctions";
+import OldQuery from "../../components/OldQueries/OldQuery";
 
-import IconTrash from "../../icons/trash";
 import IconMenuFold from "../../icons/menuFold";
 import IconMenuUnfold from "../../icons/menuUnfold";
 
@@ -119,17 +119,13 @@ function HomePage() {
                     <p className={styles.oldQueriesHeader}>Previous</p>
                 </div>
                 {previousQueries.map((query, i) => {
-                    let containerClassName = styles.queryContainer
-                    if (selectedQuery === query.url)
-                        containerClassName = styles.queryContainer + ' ' + styles.queryContainerSelected
-                    
                     return (
-                        <div key={i} className={containerClassName} onClick={() => handleOldQuerySelection(query)}>
-                            <div className={styles.queryTextContainer}>
-                                <span className={styles.previousQueries}>{query.prompt}</span>
-                            </div>
-                            <IconTrash className={styles.trashIcon} onClick={(e) => {handleDeleteOldQuery(e, query)}}/>
-                        </div>
+                        <OldQuery 
+                            query={query} 
+                            onSelect={handleOldQuerySelection}
+                            onDeleteSelected={handleDeleteOldQuery}
+                            isSelected={selectedQuery === query.url}
+                        />
                     );
                 })}
             </div>
@@ -147,8 +143,6 @@ function HomePage() {
 
                         </div>
                     }
-                    {/* List of old queries */}
-
                     {isLoggedIn ? <QueryList /> : 
                     <p className={styles.notLoggedIn}>Log in to save prompts</p>
                     }

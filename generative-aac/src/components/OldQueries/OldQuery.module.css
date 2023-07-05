@@ -1,0 +1,77 @@
+.queryContainer {
+    color: var(--text);
+    letter-spacing: -0.5px;
+
+    width: 90%;
+    padding: 12px 5px 12px 5px;
+    border-radius: 5px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+}
+
+.queryTextContainer {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+}
+
+.queryContainer:hover,
+.queryContainerSelected {
+    background-color: var(--background);
+    cursor: pointer;
+}
+
+.trashIcon {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.queryContainer:hover .trashIcon,
+.queryContainerSelected .trashIcon {
+    display: flex;
+}
+
+.queryContainer:hover .queryTextContainer,
+.queryContainerSelected .queryTextContainer {
+    width: 90%;
+}
+
+.queryContainerSelected .queryTextContainer {
+    text-overflow:ellipsis;
+    white-space: normal;
+    overflow:visible;
+}
+
+.confirmDelete {
+    position: absolute;
+    z-index: 1;
+    background-color: var(--background);
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    color: #fff;
+
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirmDelete span {
+    font-size: 0.8rem;
+}
+
+.confirmed {
+    background-color: red;
+    padding: 0.5rem;
+    border-radius: 10px;
+}
