@@ -107,6 +107,11 @@
     padding: 0.5rem;
 }
 
+.navModalLink .login {
+    color: var(--text);
+    letter-spacing: -0.5px;
+}
+
 .addBreak {
     border-top: 1px solid var(--text);
     margin-top: 0.5rem;

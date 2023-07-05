@@ -157,9 +157,11 @@ function HomePage() {
                             <div className={styles.navModalLink}>
                                 <span>About</span>
                             </div>
-                            <div className={styles.navModalLink}>
-                                <span>Pricing</span>
-                            </div>
+                            <Link to="/pricing" style={{textDecoration: 'none'}}>
+                                <div className={styles.navModalLink}>
+                                        <span className={styles.login}>Pricing</span>
+                                </div>
+                            </Link>
                             <div className={styles.addBreak}></div>
                             <div className={styles.navModalLink} onClick={() => {
                                     auth.signOut()
