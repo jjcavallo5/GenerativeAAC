@@ -1,10 +1,19 @@
 import React from 'react';
 import styles from './pricing.module.css'
+import { useNavigate } from "react-router-dom";
+import IconArrowBackOutline from '../../icons/arrowBack';
+
 
 const PricingPage = () => {
+    const navigate = useNavigate()
+
+
   return (
     <div className={styles.pageContainer}>
-      <h1>Pricing</h1>
+        <div className={styles.headerContainer}>
+            <IconArrowBackOutline className={styles.back} onClick={() => navigate('/')}/>   
+            <h1>Pricing</h1>
+        </div>
       <div className={styles.pricingContainer}>
         <div className={styles.pricingTier}>
             <h2>Small Image Package</h2>
