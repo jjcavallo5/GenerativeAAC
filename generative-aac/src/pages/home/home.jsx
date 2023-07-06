@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import styles from './home.module.css';
 import { getHFImage } from "../../backend/huggingFaceFunctions";
 import GAACImage from "../../components/GAACImage/GAACImage";
-import { getSavedQueries, deleteImageFromList } from "../../backend/firestoreFunctions";
+import { getSavedQueries, deleteImageFromList, decrementImageTokens, getImageTokenCount } from "../../backend/firestoreFunctions";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { deleteImage } from "../../backend/storageFunctions";
 import OldQuery from "../../components/OldQueries/OldQuery";
@@ -19,6 +19,7 @@ function HomePage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [previousQueries, setPreviousQueries] = useState([])
     const [selectedQuery, setSelectedQuery] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
 
     const windowSize = useRef(window.innerWidth);
     const [navOverlayShown, setNavOverlayShown] = useState(false)
@@ -41,10 +42,16 @@ function HomePage() {
     }
     
     const handlePromptSubmission = async () => {
+        let tokens = await getImageTokenCount()
+        if (tokens <= 0) {
+            setErrorMessage('Account is out of image tokens!')
+            return;
+        }
         setLoading(true)
         resetToHomeState()
         
         let response = await getHFImage(prompt);
+        decrementImageTokens()
         
         setLoading(false)
         setFromHF({
@@ -216,6 +223,7 @@ function HomePage() {
                 </div>
                 }
                 <div className={styles.promptContainer}>
+                    {errorMessage && <span style={{"color": "red"}}>Error: {errorMessage}</span>}
                     <div className={styles.promptBar}>
                         <input type="text" className={styles.prompt} placeholder="Enter a prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)} onKeyDown={(e) => checkKey(e)}/>
                         <svg height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" className={styles.submitSvg} strokeWidth="2" onClick={() => handlePromptSubmission()}><path d="M.5 1.163A1 1 0 0 1 1.97.28l12.868 6.837a1 1 0 0 1 0 1.766L1.969 15.72A1 1 0 0 1 .5 14.836V10.33a1 1 0 0 1 .816-.983L8.5 8 1.316 6.653A1 1 0 0 1 .5 5.67V1.163Z" fill="currentColor"></path></svg>
