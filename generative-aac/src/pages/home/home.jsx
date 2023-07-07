@@ -10,6 +10,7 @@ import OldQuery from "../../components/OldQueries/OldQuery";
 
 import IconMenuFold from "../../icons/menuFold";
 import IconMenuUnfold from "../../icons/menuUnfold";
+import ExampleImage from "../../components/ExampleImage/ExampleImage";
 
 
 function HomePage() {
@@ -42,6 +43,11 @@ function HomePage() {
     }
     
     const handlePromptSubmission = async () => {
+        if (!isLoggedIn) {
+            setErrorMessage("Log in to submit prompts!")
+            return;
+        }
+
         let tokens = await getImageTokenCount()
         if (tokens <= 0) {
             setErrorMessage('Account is out of image tokens!')
@@ -205,10 +211,17 @@ function HomePage() {
                 }
 
                 {(fromHF === '' && selectedQuery === '') ?
-                    <div className={styles.welcome}>
+                    <div className={isLoggedIn ? styles.welcome : styles.welcomeNotLoggedIn}>
                         <h1>Generative AAC</h1>
                         <p>Jeremy Cavallo</p>
                     </div> : null
+                }
+
+                {!isLoggedIn &&
+                    <div className={styles.examplesContainer}>
+                        <span>The possibilities are endless!</span>
+                        <ExampleImage numImages={2}/>
+                    </div>
                 }
                 {loading && <span>Loading...</span>}
                 {(fromHF !== '') &&
@@ -218,9 +231,9 @@ function HomePage() {
                 }
 
                 {(selectedQuery !== '') && 
-                <div className={styles.imgContainer}>
-                    <GAACImage src={selectedQuery} loadedFromCloud={true} isLoggedIn={isLoggedIn}/>
-                </div>
+                    <div className={styles.imgContainer}>
+                        <GAACImage src={selectedQuery} loadedFromCloud={true} isLoggedIn={isLoggedIn}/>
+                    </div>
                 }
                 <div className={styles.promptContainer}>
                     {errorMessage && <span style={{"color": "red"}}>Error: {errorMessage}</span>}
