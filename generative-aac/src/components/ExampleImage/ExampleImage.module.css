@@ -1,7 +1,10 @@
 .exampleContainer {
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    align-items: center;
     margin-top: 1rem;
+
 }
 
 .container {
@@ -21,30 +24,23 @@
     aspect-ratio: 1;
 }
 
-.download {
-    background-color: var(--dark);
-    width: 150px;
-    padding: 0.5rem;
-    border-radius: 10px;
-    color: #fff;
-    text-decoration: none;
+.reload {
+    height: 2rem;
+    width: 2rem;
+    color: var(--text);
 }
 
-
-.download:hover {
+.reload:hover {
     cursor: pointer;
-    background-color: var(--accent);
+    color: var(--accent)
 }
 
-.save, .saved {
-    font-size: 0.8rem;
-    color: #ebebf088;
-}
+@media only screen and (max-width: 1024px)  {
+    .exampleContainer {
+        flex-direction: column;
+        height: 250px;
+        overflow-y: auto;
+        justify-content: flex-start;
 
-.saved:hover{
-    cursor:default;
-}
-
-.save:hover {
-    cursor: pointer;
+    }
 }
