@@ -213,13 +213,13 @@ function HomePage() {
                 {(fromHF === '' && selectedQuery === '') ?
                     <div className={isLoggedIn ? styles.welcome : styles.welcomeNotLoggedIn}>
                         <h1>Generative AAC</h1>
-                        <p>Jeremy Cavallo</p>
+                        <p>The possibilities are endless!</p>
                     </div> : null
                 }
 
                 {!isLoggedIn &&
                     <div className={styles.examplesContainer}>
-                        <span>The possibilities are endless!</span>
+                        <span>Here's what our users have been creating.</span>
                         <ExampleImage numImages={2}/>
                     </div>
                 }

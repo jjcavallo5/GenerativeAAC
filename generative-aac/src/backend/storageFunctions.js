@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {list as listAlias} from 'firebase/storage' 
 
 const firebaseConfig = require('./firebaseCredentials.json')
 
@@ -32,7 +33,7 @@ export const deleteImage = url => {
 export const getRandomImages = async numImages => {
     const listRef = ref(storage, 'images');
 
-    let response = await listAll(listRef)
+    const response = await listAlias(listRef, { maxResults: 100 })
     let list = response.items
 
     const shuffled = [...list].sort(() => 0.5 - Math.random());
