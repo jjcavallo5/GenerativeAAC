@@ -11,6 +11,7 @@ import OldQuery from "../../components/OldQueries/OldQuery";
 import IconMenuFold from "../../icons/menuFold";
 import IconMenuUnfold from "../../icons/menuUnfold";
 import ExampleImage from "../../components/ExampleImage/ExampleImage";
+import LoginModal from "../../components/Modal/LoginModal";
 
 
 function HomePage() {
@@ -21,6 +22,7 @@ function HomePage() {
     const [previousQueries, setPreviousQueries] = useState([])
     const [selectedQuery, setSelectedQuery] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
+    const [loginModalActive, setLoginModalActive] = useState(false)
 
     const windowSize = useRef(window.innerWidth);
     const [navOverlayShown, setNavOverlayShown] = useState(false)
@@ -44,7 +46,7 @@ function HomePage() {
     
     const handlePromptSubmission = async () => {
         if (!isLoggedIn) {
-            setErrorMessage("Log in to submit prompts!")
+            setLoginModalActive(true)
             return;
         }
 
@@ -147,7 +149,7 @@ function HomePage() {
 
     return (
         <div className={styles.pageContainer} onClick={() => setNavOverlayShown(false)}>
-            {console.log()}
+            <LoginModal active={loginModalActive} deactivate={() => setLoginModalActive(false)}/>
             {collapsedSidebar ? null :
                 <div className={styles.sidebar}>
                     {!collapsedSidebar &&
@@ -181,9 +183,7 @@ function HomePage() {
                     
                     {!isLoggedIn ?
                         <div className={styles.account}>
-                            <Link to="/login" style={{textDecoration: 'none'}}>
-                                <span className={styles.login}>Log in</span>
-                            </Link>
+                            <span className={styles.login} onClick={() => setLoginModalActive(true)}>Log in</span>
                             <Link to="/register" style={{textDecoration: 'none'}}>
                                 <span className={styles.register}>Sign Up</span>
                             </Link>

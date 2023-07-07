@@ -222,6 +222,7 @@
 
 .toggleMenuIcon:hover {
     cursor: pointer;
+    color: var(--accent);
 }
 
 .welcome {
@@ -294,6 +295,7 @@
 
 .submitSvg:hover {
     cursor: pointer;
+    color: var(--accent)
 }
 
 .promptContainer p {
