@@ -44,9 +44,9 @@
 }
 
 .queryContainerSelected .queryTextContainer {
-    text-overflow:ellipsis;
+    text-overflow: ellipsis;
     white-space: normal;
-    overflow:visible;
+    overflow: visible;
 }
 
 .confirmDelete {

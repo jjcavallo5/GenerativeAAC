@@ -22,7 +22,7 @@
 
 h1 {
     align-self: center;
-    color: var(--text)
+    color: var(--text);
 }
 
 .pricingContainer {
@@ -36,8 +36,8 @@ h1 {
 .pricingTier {
     position: relative;
     padding: 1rem 3rem 1rem 3rem;
-    box-shadow: 0 0 20px #1a1919 ;
-    -webkit-box-shadow: 0 0 20px #1a1919; 
+    box-shadow: 0 0 20px #1a1919;
+    -webkit-box-shadow: 0 0 20px #1a1919;
     -moz-box-shadow: 0 0 20px #1a1919;
     border-radius: 10px;
     color: var(--text_alpha);
@@ -58,7 +58,7 @@ h1 {
 .price {
     font-size: 1.3rem;
     letter-spacing: -0.5px;
-    color: var(--text)
+    color: var(--text);
 }
 
 button {

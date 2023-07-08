@@ -81,9 +81,9 @@
 }
 
 .queryContainerSelected .queryTextContainer {
-    text-overflow:ellipsis;
+    text-overflow: ellipsis;
     white-space: normal;
-    overflow:visible;
+    overflow: visible;
 }
 
 .confirmDelete {
@@ -146,7 +146,7 @@
 
 .navModalLink:hover {
     cursor: pointer;
-    background-color: var(--background)
+    background-color: var(--background);
 }
 
 .account {
@@ -161,7 +161,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem
+    gap: 1rem;
 }
 
 .account .login {
@@ -183,12 +183,12 @@
     font-size: 0.8rem;
 }
 
-.content, 
+.content,
 .contentFullWidth {
     background-color: var(--background);
     width: calc(100vw - 15rem);
     color: var(--text);
-    
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -217,7 +217,7 @@
 .toggleMenuIcon {
     height: 30px;
     width: 30px;
-    color: var(--text)
+    color: var(--text);
 }
 
 .toggleMenuIcon:hover {
@@ -278,12 +278,14 @@
     border: none;
 
     outline: none;
-    box-shadow: 0 0 20px #1a1919 ;
-    -webkit-box-shadow: 0 0 20px #1a1919; 
+    box-shadow: 0 0 20px #1a1919;
+    -webkit-box-shadow: 0 0 20px #1a1919;
     -moz-box-shadow: 0 0 20px #1a1919;
     font-size: 16px;
-    font-family: Söhne,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,Helvetica Neue,Arial,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
-    color: var(--text)
+    font-family: Söhne, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+        Noto Sans, sans-serif, Helvetica Neue, Arial, Apple Color Emoji, Segoe UI Emoji,
+        Segoe UI Symbol, Noto Color Emoji;
+    color: var(--text);
 }
 
 .submitSvg {
@@ -295,7 +297,7 @@
 
 .submitSvg:hover {
     cursor: pointer;
-    color: var(--accent)
+    color: var(--accent);
 }
 
 .promptContainer p {
@@ -303,7 +305,7 @@
     color: var(--text);
 }
 
-@media only screen and (max-width: 520px)  {
+@media only screen and (max-width: 520px) {
     .content {
         width: 100%;
         overflow: hidden;

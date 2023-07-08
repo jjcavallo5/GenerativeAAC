@@ -2,7 +2,7 @@
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 0 20px #1a1919;
-    -webkit-box-shadow: 0 0 20px #1a1919; 
+    -webkit-box-shadow: 0 0 20px #1a1919;
     -moz-box-shadow: 0 0 20px #1a1919;
     display: flex;
     flex-direction: column;
@@ -24,19 +24,19 @@
     text-decoration: none;
 }
 
-
 .download:hover {
     cursor: pointer;
     background-color: var(--accent);
 }
 
-.save, .saved {
+.save,
+.saved {
     font-size: 0.8rem;
     color: #ebebf088;
 }
 
-.saved:hover{
-    cursor:default;
+.saved:hover {
+    cursor: default;
 }
 
 .save:hover {

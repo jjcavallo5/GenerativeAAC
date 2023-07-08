@@ -1,7 +1,6 @@
-
 .loginContainer {
-    box-shadow: 0 0 20px #1a1919 ;
-    -webkit-box-shadow: 0 0 20px #1a1919; 
+    box-shadow: 0 0 20px #1a1919;
+    -webkit-box-shadow: 0 0 20px #1a1919;
     -moz-box-shadow: 0 0 20px #1a1919;
     background-color: var(--background);
 
@@ -48,8 +47,8 @@
 .textInput {
     font-size: 1rem;
     padding: 1rem 0.5rem 1rem 0.5rem;
-    box-shadow: 0 0 20px #1a1919 ;
-    -webkit-box-shadow: 0 0 20px #1a1919; 
+    box-shadow: 0 0 20px #1a1919;
+    -webkit-box-shadow: 0 0 20px #1a1919;
     -moz-box-shadow: 0 0 20px #1a1919;
 
     background-color: var(--dark);
@@ -59,11 +58,11 @@
     margin-bottom: 1rem;
     border-radius: 10px;
     max-width: 300px;
-    width: 90%
+    width: 90%;
 }
 
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
+input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 textarea:-webkit-autofill,
 textarea:-webkit-autofill:hover,
@@ -77,7 +76,7 @@ select:-webkit-autofill:focus {
     transition: background-color 5000s ease-in-out 0s;
 }
 
-.errorMessage{
+.errorMessage {
     color: red;
     text-align: center;
     font-size: 0.9rem;
@@ -93,7 +92,7 @@ select:-webkit-autofill:focus {
     border-radius: 10px;
     justify-self: center;
     align-self: center;
-    color: var(--text)
+    color: var(--text);
 }
 
 .submit:hover {
@@ -115,7 +114,7 @@ select:-webkit-autofill:focus {
     color: var(--text);
 }
 
-@media only screen and (max-width: 300px)  {
+@media only screen and (max-width: 300px) {
     .loginContainer h1 {
         font-size: 1.5rem;
     }

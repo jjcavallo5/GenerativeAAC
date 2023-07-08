@@ -1,18 +1,16 @@
 import React from "react";
-import styles from './Modal.module.css'
+import styles from "./Modal.module.css";
 
 const Modal = (props) => {
     return (
         <div>
-            {props.active &&
+            {props.active && (
                 <div className={styles.container} onClick={() => props.deactivate()}>
-                    <div onClick={(e) => e.stopPropagation()}>
-                        {props.children}
-                    </div>
+                    <div onClick={(e) => e.stopPropagation()}>{props.children}</div>
                 </div>
-            }
+            )}
         </div>
     );
 };
 
-export default Modal
+export default Modal;
