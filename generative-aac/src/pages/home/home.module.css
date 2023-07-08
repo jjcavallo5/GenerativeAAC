@@ -236,6 +236,23 @@
     letter-spacing: -0.5px;
 }
 
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.loadingContainer span {
+    font-size: 0.8rem;
+    color: var(--text_alpha);
+}
+
+.loadingAnimation {
+    height: 10rem;
+    aspect-ratio: 1;
+}
+
 .examplesContainer {
     width: 80%;
     display: flex;

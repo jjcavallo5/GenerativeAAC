@@ -12,6 +12,8 @@ import {
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { deleteImage } from "../../backend/storageFunctions";
 import OldQuery from "../../components/OldQueries/OldQuery";
+import loadingAnimation from "../../animations/loading2.json";
+import Lottie from "lottie-react";
 
 import IconMenuFold from "../../icons/menuFold";
 import IconMenuUnfold from "../../icons/menuUnfold";
@@ -144,6 +146,7 @@ function HomePage() {
                             onSelect={handleOldQuerySelection}
                             onDeleteSelected={handleDeleteOldQuery}
                             isSelected={selectedQuery === query.url}
+                            key={i}
                         />
                     );
                 })}
@@ -246,7 +249,16 @@ function HomePage() {
                         <ExampleImage numImages={2} />
                     </div>
                 )}
-                {loading && <span>Loading...</span>}
+                {loading && (
+                    <div className={styles.loadingContainer}>
+                        <Lottie
+                            animationData={loadingAnimation}
+                            loop={true}
+                            className={styles.loadingAnimation}
+                        />
+                        <span>Loading the model may take a few minutes</span>
+                    </div>
+                )}
                 {fromHF !== "" && (
                     <div className={styles.imgContainer}>
                         <GAACImage
