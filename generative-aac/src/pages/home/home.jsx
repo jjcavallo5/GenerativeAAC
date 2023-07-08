@@ -12,7 +12,7 @@ import {
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { deleteImage } from "../../backend/storageFunctions";
 import OldQuery from "../../components/OldQueries/OldQuery";
-import loadingAnimation from "../../animations/loading2.json";
+import loadingAnimation from "../../animations/loading.json";
 import Lottie from "lottie-react";
 
 import IconMenuFold from "../../icons/menuFold";
@@ -246,7 +246,11 @@ function HomePage() {
                 {!isLoggedIn && (
                     <div className={styles.examplesContainer}>
                         <span>Here's what our users have been creating.</span>
-                        <ExampleImage numImages={2} />
+                        <ExampleImage
+                            numImages={2}
+                            onLoading={() => setLoading(true)}
+                            onFinishLoading={() => setLoading(false)}
+                        />
                     </div>
                 )}
                 {loading && (
