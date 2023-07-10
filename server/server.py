@@ -1,5 +1,5 @@
 import json
-from flask import Flask, redirect, request, jsonify
+from flask import Flask, Response, redirect, request, jsonify
 import config
 
 import stripe
@@ -12,28 +12,38 @@ app = Flask(__name__,
 
 YOUR_DOMAIN = 'http://localhost:3000'
 
-@app.route('/create-checkout-session', methods=['POST'])
-def create_checkout_session():
-    print("request: ", request.data)
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        print("options req")
+        res = Response()
+        res.headers.add('Access-Control-Allow-Origin', '*')
+        res.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        return res
 
+@app.route('/create-payment-intent', methods=['POST'])
+def create_payment():
     try:
-        checkout_session = stripe.checkout.Session.create(
-            line_items=[
-                {
-                    # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-                    'price': config.STRIPE_PRICE_ID,
-                    'quantity': 1,
-                },
-            ],
-            mode='payment',
-            success_url=YOUR_DOMAIN + '?success=true',
-            cancel_url=YOUR_DOMAIN + '?canceled=true',
-            automatic_tax={'enabled': True},
+        # Create a PaymentIntent with the order amount and currency
+        intent = stripe.PaymentIntent.create(
+            amount=1000,
+            currency='usd',
+            automatic_payment_methods={
+                'enabled': True,
+            },
         )
+        print("Success")
+        response = jsonify({
+            'clientSecret': intent['client_secret']
+        })
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
     except Exception as e:
-        return str(e)
+        print("Fail")
+        response = jsonify(error=str(e)), 403
+        response.headers.add('Access-Control-Allow-Origin', '*')
 
-    return redirect(checkout_session.url, code=303)
+        return response
 
 
 endpoint_secret = config.STRIPE_WEBHOOK_ENDPOINT_SECRET
