@@ -1,5 +1,5 @@
 import json
-from flask import Flask, Response, redirect, request, jsonify
+from flask import Flask, Response, request, jsonify
 import config
 import firebase_admin
 from firebase_admin import credentials
@@ -17,20 +17,24 @@ app = Flask(__name__,
             static_url_path='',
             static_folder='public')
 
-YOUR_DOMAIN = 'http://localhost:3000'
+DOMAIN = 'http://localhost:3000'
+SMALL_PACKAGE_PRICE = 1000
+LARGE_PACKAGE_PRICE = 2500
+SMALL_PACKAGE_COUNT = 500
+LARGE_PACKAGE_COUNT = 1500
 
 def get_price(item):
     if item == 'smallImagePackage':
-        return 1000
+        return SMALL_PACKAGE_PRICE
     elif item == 'largeImagePackage':
-        return 2500
+        return LARGE_PACKAGE_PRICE
 
 @app.before_request
 def handle_preflight():
     if request.method == "OPTIONS":
         print("options req")
         res = Response()
-        res.headers.add('Access-Control-Allow-Origin', '*')
+        res.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
         res.headers.add('Access-Control-Allow-Headers', 'Content-Type')
         return res
 
@@ -55,12 +59,12 @@ def create_payment():
         response = jsonify({
             'clientSecret': intent['client_secret']
         })
-        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
         return response
     except Exception as e:
         print("Fail")
         response = jsonify(error=str(e)), 403
-        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
 
         return response
 
@@ -96,7 +100,7 @@ def webhook():
         print(f"User: {payment_intent['metadata']['userEmail']}")
         doc = payment_intent['metadata']['userEmail']
 
-        incrementBy = 500 if payment_intent['amount'] == 1000 else 1500
+        incrementBy = SMALL_PACKAGE_COUNT if payment_intent['amount'] == SMALL_PACKAGE_PRICE else LARGE_PACKAGE_COUNT
         print(incrementBy)
         ref = db.collection("users").document(doc)
         ref.update({"imageTokenCount": firestore.Increment(incrementBy)})

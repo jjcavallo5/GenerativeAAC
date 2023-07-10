@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./pricing.module.css";
 import { useNavigate } from "react-router-dom";
 import IconArrowBackOutline from "../../icons/arrowBack";
-import { loadStripe } from '@stripe/stripe-js'
-import { Elements } from '@stripe/react-stripe-js'
-import CheckoutForm from "../checkout/CheckoutForm";
-import Modal from "../../components/Modal/Modal";
-import { getCurrentUserEmail } from "../../backend/authFunctions";
+
 
 const PricingPage = () => {
     const navigate = useNavigate();

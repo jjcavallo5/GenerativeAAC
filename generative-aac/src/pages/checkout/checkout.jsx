@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./checkout.module.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import IconArrowBackOutline from "../../icons/arrowBack";
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
@@ -31,7 +31,7 @@ const CheckoutPage = () => {
           .then((res) => res.json())
           .then((data) => setClientSecret(data.clientSecret))
           .catch((error) => setErrorMessage("Can't connect to payment server"))
-      }, [userEmail]);
+      }, [userEmail, item]);
 
       const options = {
         clientSecret
@@ -44,16 +44,23 @@ const CheckoutPage = () => {
                 <h1>Checkout</h1>
 
             </div>
-            {
-                item == 'smallImagePackage' ?
+            {item === 'smallImagePackage' &&
                 <div className={styles.purchaseInfo}>
                     <p>Small Image Package</p>
                     <h2>$10</h2>
                 </div>
-                :
+            }
+            {item === 'largeImagePackage' &&
                 <div className={styles.purchaseInfo}>
                     <p>Large Image Package</p>
                     <h2>$25</h2>
+                </div>
+            }
+
+            {item === 'subscription' &&
+                <div className={styles.purchaseInfo}>
+                    <p>Pay-As-You-Go</p>
+                    <h2>$0.10/image</h2>
                 </div>
             }
             {clientSecret && (
