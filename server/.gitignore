@@ -1,2 +1,4 @@
 .venv
 config.py
+*.json
+service-account-key.json

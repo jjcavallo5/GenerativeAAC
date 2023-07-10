@@ -1,6 +1,13 @@
 import json
 from flask import Flask, Response, redirect, request, jsonify
 import config
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate('server/service-account-key.json')
+app = firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 import stripe
 # This is your test secret API key.
@@ -24,6 +31,9 @@ def handle_preflight():
 @app.route('/create-payment-intent', methods=['POST'])
 def create_payment():
     try:
+        data = json.loads(request.data)
+        userEmail = data['userEmail']
+
         # Create a PaymentIntent with the order amount and currency
         intent = stripe.PaymentIntent.create(
             amount=1000,
@@ -31,6 +41,9 @@ def create_payment():
             automatic_payment_methods={
                 'enabled': True,
             },
+            metadata={
+                'userEmail': userEmail
+            }
         )
         print("Success")
         response = jsonify({
@@ -74,8 +87,12 @@ def webhook():
     if event and event['type'] == 'payment_intent.succeeded':
         payment_intent = event['data']['object']  # contains a stripe.PaymentIntent
         print('Payment for {} succeeded'.format(payment_intent['amount']))
-        # Then define and call a method to handle the successful payment intent.
-        # handle_payment_intent_succeeded(payment_intent)
+        print(f"User: {payment_intent['metadata']['userEmail']}")
+        doc = payment_intent['metadata']['userEmail']
+
+        ref = db.collection("users").document(doc)
+        ref.update({"imageTokenCount": firestore.Increment(500)})
+
     elif event['type'] == 'payment_method.attached':
         payment_method = event['data']['object']  # contains a stripe.PaymentMethod
         # Then define and call a method to handle the successful attachment of a PaymentMethod.
