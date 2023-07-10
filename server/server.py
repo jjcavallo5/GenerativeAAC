@@ -19,6 +19,12 @@ app = Flask(__name__,
 
 YOUR_DOMAIN = 'http://localhost:3000'
 
+def get_price(item):
+    if item == 'smallImagePackage':
+        return 1000
+    elif item == 'largeImagePackage':
+        return 2500
+
 @app.before_request
 def handle_preflight():
     if request.method == "OPTIONS":
@@ -36,7 +42,7 @@ def create_payment():
 
         # Create a PaymentIntent with the order amount and currency
         intent = stripe.PaymentIntent.create(
-            amount=1000,
+            amount=get_price(data['item']),
             currency='usd',
             automatic_payment_methods={
                 'enabled': True,
@@ -90,8 +96,10 @@ def webhook():
         print(f"User: {payment_intent['metadata']['userEmail']}")
         doc = payment_intent['metadata']['userEmail']
 
+        incrementBy = 500 if payment_intent['amount'] == 1000 else 1500
+        print(incrementBy)
         ref = db.collection("users").document(doc)
-        ref.update({"imageTokenCount": firestore.Increment(500)})
+        ref.update({"imageTokenCount": firestore.Increment(incrementBy)})
 
     elif event['type'] == 'payment_method.attached':
         payment_method = event['data']['object']  # contains a stripe.PaymentMethod
