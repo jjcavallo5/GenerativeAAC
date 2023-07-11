@@ -139,17 +139,19 @@ function HomePage() {
                 <div className={styles.oldQueriesHeaderContainer}>
                     <p className={styles.oldQueriesHeader}>Previous</p>
                 </div>
-                {previousQueries.map((query, i) => {
-                    return (
-                        <OldQuery
-                            query={query}
-                            onSelect={handleOldQuerySelection}
-                            onDeleteSelected={handleDeleteOldQuery}
-                            isSelected={selectedQuery === query.url}
-                            key={i}
-                        />
-                    );
-                })}
+                <div className={styles.scrollable}>
+                    {previousQueries.map((query, i) => {
+                        return (
+                            <OldQuery
+                                query={query}
+                                onSelect={handleOldQuerySelection}
+                                onDeleteSelected={handleDeleteOldQuery}
+                                isSelected={selectedQuery === query.url}
+                                key={i}
+                            />
+                        );
+                    })}
+                </div>
             </div>
         );
     };
