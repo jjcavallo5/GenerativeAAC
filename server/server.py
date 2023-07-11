@@ -4,13 +4,14 @@ import config
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import requests
 
 cred = credentials.Certificate('server/service-account-key.json')
 app = firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 import stripe
-# This is your test secret API key.
+
 stripe.api_key = config.STRIPE_API_SECRET_KEY
 
 app = Flask(__name__,
@@ -36,7 +37,28 @@ def handle_preflight():
         res = Response()
         res.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
         res.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+
         return res
+    
+@app.route('/hugging-face-api', methods=['POST'])
+def hugging_face_api():
+    data = json.loads(request.data)
+    API_URL = "https://api-inference.huggingface.co/models/jjcavallo5/generative_aac"
+    headers = {"Authorization": f"Bearer {config.HF_API_KEY}"}
+
+    print("Before")
+    response = requests.post(API_URL, headers=headers, json=data)
+    print("AFter")
+
+    response = Response(
+        response=response.content, 
+        status=response.status_code
+    )
+
+    response.headers.add('Access-Control-Allow-Origin', DOMAIN)
+    response.headers.add("access-control-expose-headers", "x-compute-type, x-compute-time")
+    return response
+
 
 @app.route('/create-payment-intent', methods=['POST'])
 def create_payment():
