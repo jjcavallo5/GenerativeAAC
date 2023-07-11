@@ -29,6 +29,7 @@ function HomePage() {
     const [selectedQuery, setSelectedQuery] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [loginModalActive, setLoginModalActive] = useState(false);
+    const [accountTokens, setAccountTokens] = useState(0)
 
     const windowSize = useRef(window.innerWidth);
     const [navOverlayShown, setNavOverlayShown] = useState(false);
@@ -56,6 +57,7 @@ function HomePage() {
         }
 
         let tokens = await getImageTokenCount();
+
         if (tokens <= 0) {
             setErrorMessage("Account is out of image tokens!");
             return;
@@ -65,6 +67,7 @@ function HomePage() {
 
         let response = await getHFImage(prompt);
         decrementImageTokens();
+        setAccountTokens(accountTokens - 1)
 
         setLoading(false);
         setFromHF({
@@ -117,11 +120,8 @@ function HomePage() {
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                console.log("True");
                 setIsLoggedIn(true);
             } else {
-                console.log("False");
-
                 setIsLoggedIn(false);
             }
         });
@@ -130,7 +130,9 @@ function HomePage() {
             getSavedQueries()
                 .then((queries) => setPreviousQueries(queries))
                 .catch((error) => console.error(error));
+            getImageTokenCount().then(tokens => setAccountTokens(tokens))
         }
+
     }, [auth, isLoggedIn]);
 
     const QueryList = () => {
@@ -197,6 +199,7 @@ function HomePage() {
                             >
                                 <span>Log out</span>
                             </div>
+                            <span className={styles.tokenCountText}>Account Tokens: {accountTokens}</span>
                         </div>
                     )}
 

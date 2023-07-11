@@ -36,13 +36,11 @@ export const getRandomImages = async (numImages) => {
     const response = await listAlias(listRef, { maxResults: 100 });
     let list = response.items;
 
-    const shuffled = [...list].sort(() => 0.5 - Math.random());
-    const items = shuffled.slice(0, numImages);
-
     let urlList = [];
 
-    for (let i = 0; i < items.length; i++) {
-        let randomRef = ref(storage, items[i].fullPath);
+    for (let i = 0; i < numImages; i++) {
+        let randomIndex = Math.floor(Math.random() * list.length)
+        let randomRef = ref(storage, list[randomIndex].fullPath);
         let url = await getDownloadURL(randomRef);
         urlList.push(url);
     }

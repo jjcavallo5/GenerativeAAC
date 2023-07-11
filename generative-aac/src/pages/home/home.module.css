@@ -158,6 +158,12 @@
     background-color: var(--background);
 }
 
+.tokenCountText {
+    padding: 0.5rem;
+    color: var(--text_alpha);
+    font-size: 0.8rem;
+}
+
 .account {
     position: absolute;
     bottom: 0;
