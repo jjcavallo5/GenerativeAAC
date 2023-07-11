@@ -83,3 +83,12 @@ export const getSavedQueries = async () => {
 
     return docSnap.get("imageURLs").reverse();
 };
+
+export const storeSubscriptionID = async (subscriptionID) => {
+    let userEmail = getCurrentUserEmail();
+    let docRef = doc(db, "users", userEmail);
+
+    updateDoc(docRef, {
+        subscriptionID: subscriptionID,
+    }).then((snap) => console.log("Added subscription ID"));
+}

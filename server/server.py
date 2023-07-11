@@ -1,4 +1,6 @@
 import json
+import time
+import uuid
 from flask import Flask, Response, request, jsonify
 import config
 import firebase_admin
@@ -58,6 +60,66 @@ def hugging_face_api():
     response.headers.add('Access-Control-Allow-Origin', DOMAIN)
     response.headers.add("access-control-expose-headers", "x-compute-type, x-compute-time")
     return response
+
+@app.route('/create-subscription', methods=['POST'])
+def create_subscription():
+    data = json.loads(request.data)
+    print(data['email'])
+
+    customer = stripe.Customer.create(email=data['email'])
+
+    price_id = config.STRIPE_SUBSCRIPTION_PRICE_ID
+
+    try:
+        # Create the subscription. Note we're expanding the Subscription's
+        # latest invoice and that invoice's payment_intent
+        # so we can pass it to the front end to confirm the payment
+        subscription = stripe.Subscription.create(
+            customer=customer.id,
+            items=[{
+                'price': price_id,
+            }],
+            payment_behavior='default_incomplete',
+            payment_settings={'save_default_payment_method': 'on_subscription'},
+            expand=['pending_setup_intent'],
+        )
+        print(subscription.pending_setup_intent.client_secret)
+        response = jsonify(subscriptionId=subscription['items'].data[0].id, clientSecret=subscription.pending_setup_intent.client_secret)
+        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+        return response
+
+    except Exception as e:
+        response = jsonify(error={'message': e.user_message}), 400
+        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+
+        return response
+
+
+
+@app.route('/update-usage', methods=['POST'])
+def update_usage():
+    data = json.loads(request.data)
+    subscription_item_id = data['subscription_id']
+    usage_quantity = data['usage']
+
+    timestamp = int(time.time())
+
+    try:
+        stripe.SubscriptionItem.create_usage_record(
+            subscription_item_id,
+            quantity=usage_quantity,
+            timestamp=timestamp,
+            action='increment',
+        )
+        print("Updated state")
+        response = Response()
+        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+        return response
+    except stripe.error.StripeError as e:
+        print('Usage report failed for item ID %s with idempotency key: %s' %
+        (subscription_item_id, e.error.message))
+        pass
+
 
 
 @app.route('/create-payment-intent', methods=['POST'])

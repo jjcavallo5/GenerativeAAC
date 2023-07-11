@@ -7,6 +7,16 @@ import IconArrowBackOutline from "../../icons/arrowBack";
 const PricingPage = () => {
     const navigate = useNavigate();
 
+    const updateUsage = () => {
+        fetch('http://localhost:4242/update-usage', {
+            method: 'POST',
+            body: JSON.stringify({
+                'subscription_id': 'si_OFEPAejD7hAOCN',
+                'usage': 1
+            })
+        })
+    }
+
     return (
         <div className={styles.pageContainer}>
             <div className={styles.headerContainer}>
@@ -30,8 +40,9 @@ const PricingPage = () => {
                     <h2>Pay-as-you-go</h2>
                     <p>Save images on your account</p>
                     <p className={styles.price}>$0.10/image</p>
-                    <button>Get Started</button>
+                    <button onClick={() => navigate('/checkout?item=subscription')}>Get Started</button>
                 </div>
+                <button onClick={() => updateUsage()}>Test Button</button>
             </div>
         </div>
     );

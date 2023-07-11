@@ -5,6 +5,7 @@ import IconArrowBackOutline from "../../icons/arrowBack";
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import CheckoutForm from "./CheckoutForm";
+import CheckoutSubscription from './CheckoutSubscription'
 import { getCurrentUserEmail } from "../../backend/authFunctions";
 
 const stripe = loadStripe(process.env.REACT_APP_PUBLIC_STRIPE_PUBLISHABLE_KEY)
@@ -18,24 +19,34 @@ const CheckoutPage = () => {
     const item = urlParams.get('item')
 
     useEffect(() => {
-
-        // Create PaymentIntent as soon as the page loads
-        fetch("http://localhost:4242/create-payment-intent", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-                'userEmail': userEmail,
-                'item': item
+        
+        if (item !== 'subscription') {
+            // Create PaymentIntent as soon as the page loads
+            fetch("http://localhost:4242/create-payment-intent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                    'userEmail': userEmail,
+                    'item': item
+                })
             })
-        })
-          .then((res) => res.json())
-          .then((data) => setClientSecret(data.clientSecret))
-          .catch((error) => setErrorMessage("Can't connect to payment server"))
+            .then((res) => res.json())
+            .then((data) => setClientSecret(data.clientSecret))
+            .catch((error) => setErrorMessage("Can't connect to payment server"))
+        }
       }, [userEmail, item]);
 
-      const options = {
+      let options = {
         clientSecret
       };
+
+      if (item === 'subscription')
+        options = {
+            mode: 'subscription',
+            amount: 100,
+            currency: 'usd',
+            // Fully customizable with appearance API.
+        };
 
     return (
         <div className={styles.pageContainer}>
@@ -61,9 +72,14 @@ const CheckoutPage = () => {
                 <div className={styles.purchaseInfo}>
                     <p>Pay-As-You-Go</p>
                     <h2>$0.10/image</h2>
+                    <Elements options={options} stripe={stripe}>
+                        <CheckoutSubscription />
+                    </Elements>
+
                 </div>
             }
-            {clientSecret && (
+
+            {(clientSecret && item !== 'subscription') && (
                 <Elements options={options} stripe={stripe}>
                     <CheckoutForm />
                 </Elements>
