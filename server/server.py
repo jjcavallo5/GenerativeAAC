@@ -1,6 +1,5 @@
 import json
 import time
-import uuid
 from flask import Flask, Response, request, jsonify
 import config
 import firebase_admin

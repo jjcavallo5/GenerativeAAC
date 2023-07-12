@@ -88,7 +88,29 @@ export const storeSubscriptionID = async (subscriptionID) => {
     let userEmail = getCurrentUserEmail();
     let docRef = doc(db, "users", userEmail);
 
+    await setDoc(doc(db, "subscriptions", subscriptionID), {
+        email: userEmail,
+        subscriptionUsage: 0,
+    });
+
     updateDoc(docRef, {
         subscriptionID: subscriptionID,
     }).then((snap) => console.log("Added subscription ID"));
-}
+};
+
+export const getSubscriptionID = async () => {
+    let userEmail = getCurrentUserEmail();
+    let docRef = doc(db, "users", userEmail);
+
+    const docSnap = await getDoc(docRef);
+    return docSnap.get("subscriptionID");
+};
+
+export const incrementSubscriptionUsage = async () => {
+    let subscriptionID = await getSubscriptionID();
+    let docRef = doc(db, "subscriptions", subscriptionID);
+
+    updateDoc(docRef, {
+        subscriptionUsage: increment(1),
+    }).then((snap) => console.log("Incremented"));
+};

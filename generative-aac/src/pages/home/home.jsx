@@ -8,6 +8,8 @@ import {
     deleteImageFromList,
     decrementImageTokens,
     getImageTokenCount,
+    getSubscriptionID,
+    incrementSubscriptionUsage,
 } from "../../backend/firestoreFunctions";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { deleteImage } from "../../backend/storageFunctions";
@@ -29,7 +31,8 @@ function HomePage() {
     const [selectedQuery, setSelectedQuery] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [loginModalActive, setLoginModalActive] = useState(false);
-    const [accountTokens, setAccountTokens] = useState(0)
+    const [accountTokens, setAccountTokens] = useState(0);
+    const [isSubscriber, setIsSubscriber] = useState(false);
 
     const windowSize = useRef(window.innerWidth);
     const [navOverlayShown, setNavOverlayShown] = useState(false);
@@ -56,18 +59,25 @@ function HomePage() {
             return;
         }
 
-        let tokens = await getImageTokenCount();
+        if (!isSubscriber) {
+            let tokens = await getImageTokenCount();
 
-        if (tokens <= 0) {
-            setErrorMessage("Account is out of image tokens!");
-            return;
+            if (tokens <= 0) {
+                setErrorMessage("Account is out of image tokens!");
+                return;
+            }
         }
+
         setLoading(true);
         resetToHomeState();
 
         let response = await getHFImage(prompt);
-        decrementImageTokens();
-        setAccountTokens(accountTokens - 1)
+
+        if (isSubscriber) await incrementSubscriptionUsage();
+        else {
+            decrementImageTokens();
+            setAccountTokens(accountTokens - 1);
+        }
 
         setLoading(false);
         setFromHF({
@@ -130,9 +140,11 @@ function HomePage() {
             getSavedQueries()
                 .then((queries) => setPreviousQueries(queries))
                 .catch((error) => console.error(error));
-            getImageTokenCount().then(tokens => setAccountTokens(tokens))
+            getImageTokenCount().then((tokens) => setAccountTokens(tokens));
+            getSubscriptionID()
+                .then((subID) => setIsSubscriber(true))
+                .catch((error) => setIsSubscriber(false));
         }
-
     }, [auth, isLoggedIn]);
 
     const QueryList = () => {
@@ -199,7 +211,14 @@ function HomePage() {
                             >
                                 <span>Log out</span>
                             </div>
-                            <span className={styles.tokenCountText}>Account Tokens: {accountTokens}</span>
+                            {!isSubscriber && (
+                                <span className={styles.tokenCountText}>
+                                    Account Tokens: {accountTokens}
+                                </span>
+                            )}
+                            {isSubscriber && (
+                                <span className={styles.tokenCountText}>Pay-Per-Image Plan</span>
+                            )}
                         </div>
                     )}
 
