@@ -6,6 +6,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import requests
+from apscheduler.schedulers.background import BackgroundScheduler
 
 cred = credentials.Certificate('server/service-account-key.json')
 app = firebase_admin.initialize_app(cred)
@@ -95,30 +96,55 @@ def create_subscription():
 
 
 
-@app.route('/update-usage', methods=['POST'])
-def update_usage():
-    data = json.loads(request.data)
-    subscription_item_id = data['subscription_id']
-    usage_quantity = data['usage']
+# @app.route('/update-usage', methods=['POST'])
+# def update_usage():
+#     data = json.loads(request.data)
+#     subscription_item_id = data['subscription_id']
+#     usage_quantity = data['usage']
+
+#     timestamp = int(time.time())
+
+#     try:
+#         stripe.SubscriptionItem.create_usage_record(
+#             subscription_item_id,
+#             quantity=usage_quantity,
+#             timestamp=timestamp,
+#             action='increment',
+#         )
+#         print("Updated state")
+#         response = Response()
+#         response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+#         return response
+#     except stripe.error.StripeError as e:
+#         print('Usage report failed for item ID %s with idempotency key: %s' %
+#         (subscription_item_id, e.error.message))
+#         pass
+
+def update_usage(subscription_id, usage_quantity):
 
     timestamp = int(time.time())
 
     try:
         stripe.SubscriptionItem.create_usage_record(
-            subscription_item_id,
+            subscription_id,
             quantity=usage_quantity,
             timestamp=timestamp,
-            action='increment',
+            action='set',
         )
-        print("Updated state")
-        response = Response()
-        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
-        return response
+
     except stripe.error.StripeError as e:
         print('Usage report failed for item ID %s with idempotency key: %s' %
-        (subscription_item_id, e.error.message))
+        (subscription_id, e.error.message))
         pass
 
+def log_usage_daily():
+    docs = db.collection("subscriptions").stream()
+
+    for doc in docs:
+        usage = doc.to_dict()['subscriptionUsage']
+
+        # print(doc.id, usage)
+        update_usage(doc.id, usage)
 
 
 @app.route('/create-payment-intent', methods=['POST'])
@@ -199,4 +225,7 @@ def webhook():
     return jsonify(success=True)
 
 if __name__ == '__main__':
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=log_usage_daily, trigger="interval", minutes=2)
+    scheduler.start()
     app.run(port=4242)
