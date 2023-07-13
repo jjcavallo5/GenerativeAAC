@@ -202,6 +202,11 @@ function HomePage() {
                                 </div>
                             </Link>
                             <div className={styles.addBreak}></div>
+                            <Link to="/account" style={{ textDecoration: "none" }}>
+                                <div className={styles.navModalLink}>
+                                    <span className={styles.login}>Settings</span>
+                                </div>
+                            </Link>
                             <div
                                 className={styles.navModalLink}
                                 onClick={() => {
