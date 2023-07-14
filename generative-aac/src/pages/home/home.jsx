@@ -249,10 +249,11 @@ function HomePage() {
                                 className={styles.queryContainer}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    setNavOverlayShown(true);
+                                    if (navOverlayShown) setNavOverlayShown(false);
+                                    else setNavOverlayShown(true);
                                 }}
                             >
-                                <span>Account Settings</span>
+                                <span>Menu</span>
                             </div>
                         </div>
                     )}

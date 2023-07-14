@@ -57,6 +57,8 @@ def hugging_face_api():
 
     response.headers.add('Access-Control-Allow-Origin', DOMAIN)
     response.headers.add("access-control-expose-headers", "x-compute-type, x-compute-time")
+    response.headers['content-type'] = 'image/jpeg'
+
     return response
 
 @app.route('/create-subscription', methods=['POST'])
