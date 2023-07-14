@@ -4,6 +4,10 @@ import { getCurrentUserEmail } from "../../backend/authFunctions";
 import { storeSubscriptionID } from "../../backend/firestoreFunctions";
 import styles from "./CheckoutForm.module.css";
 
+import Modal from "../../components/Modal/Modal";
+import Lottie from "lottie-react";
+import loadingAnimation from "../../animations/loading.json";
+
 export default function CheckoutSubscription() {
     const stripe = useStripe();
     const elements = useElements();
@@ -73,7 +77,16 @@ export default function CheckoutSubscription() {
         <form onSubmit={handleSubmit} className={styles.paymentForm}>
             <PaymentElement />
             <button type="submit" disabled={!stripe || loading}>
-                Submit Payment
+                {!loading ? (
+                    "Submit Payment"
+                ) : (
+                    <Lottie
+                        animationData={loadingAnimation}
+                        loop={true}
+                        className={styles.loadingAnimation}
+                        style={{ height: "50px" }}
+                    />
+                )}
             </button>
             {errorMessage && <div>{errorMessage}</div>}
         </form>
