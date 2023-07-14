@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import { getCurrentUserEmail } from "../../backend/authFunctions";
 import { storeSubscriptionID } from "../../backend/firestoreFunctions";
+import styles from "./CheckoutForm.module.css";
 
 export default function CheckoutSubscription() {
     const stripe = useStripe();
@@ -69,7 +70,7 @@ export default function CheckoutSubscription() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={styles.paymentForm}>
             <PaymentElement />
             <button type="submit" disabled={!stripe || loading}>
                 Submit Payment
