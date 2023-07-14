@@ -48,9 +48,7 @@ def hugging_face_api():
     API_URL = "https://api-inference.huggingface.co/models/jjcavallo5/generative_aac"
     headers = {"Authorization": f"Bearer {config.HF_API_KEY}"}
 
-    print("Before")
     response = requests.post(API_URL, headers=headers, json=data)
-    print("AFter")
 
     response = Response(
         response=response.content, 
@@ -210,13 +208,16 @@ def webhook():
         doc = payment_intent['metadata']['userEmail']
 
         incrementBy = SMALL_PACKAGE_COUNT if payment_intent['amount'] == SMALL_PACKAGE_PRICE else LARGE_PACKAGE_COUNT
-        print(incrementBy)
         ref = db.collection("users").document(doc)
         ref.update({"imageTokenCount": firestore.Increment(incrementBy)})
 
-    elif event['type'] == 'payment_method.attached':
-        payment_method = event['data']['object']  # contains a stripe.PaymentMethod
-        # Then define and call a method to handle the successful attachment of a PaymentMethod.
+    elif event['type'] == 'invoice.paid':
+        if event.data.object.total == 0:
+            return jsonify(success=True)
+
+        item_id = event.data.object.lines.data[0].subscription_item
+        ref = db.collection("subscription").document(item_id)
+        ref.update({"subscriptionUsage": 0})
         # handle_payment_method_attached(payment_method)
     else:
         # Unexpected event type
