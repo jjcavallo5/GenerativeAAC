@@ -227,6 +227,6 @@ def webhook():
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=log_usage_daily, trigger="interval", minutes=2)
+    scheduler.add_job(func=log_usage_daily, trigger="interval", hours=1)
     scheduler.start()
     app.run(port=4242)

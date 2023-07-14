@@ -193,15 +193,22 @@ function HomePage() {
                     )}
                     {navOverlayShown && (
                         <div className={styles.navModal}>
-                            <div className={styles.navModalLink}>
-                                <span>About</span>
-                            </div>
+                            <Link to="/about" style={{ textDecoration: "none" }}>
+                                <div className={styles.navModalLink}>
+                                    <span className={styles.login}>About</span>
+                                </div>
+                            </Link>
                             <Link to="/pricing" style={{ textDecoration: "none" }}>
                                 <div className={styles.navModalLink}>
                                     <span className={styles.login}>Pricing</span>
                                 </div>
                             </Link>
                             <div className={styles.addBreak}></div>
+                            <Link to="/account" style={{ textDecoration: "none" }}>
+                                <div className={styles.navModalLink}>
+                                    <span className={styles.login}>Settings</span>
+                                </div>
+                            </Link>
                             <div
                                 className={styles.navModalLink}
                                 onClick={() => {
