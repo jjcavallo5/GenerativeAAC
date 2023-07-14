@@ -206,57 +206,68 @@ function HomePage() {
                                 </div>
                             </Link>
                             <div className={styles.addBreak}></div>
-                            <Link to="/account" style={{ textDecoration: "none" }}>
-                                <div className={styles.navModalLink}>
-                                    <span className={styles.login}>Settings</span>
+                            {isLoggedIn && (
+                                <Link to="/account" style={{ textDecoration: "none" }}>
+                                    <div className={styles.navModalLink}>
+                                        <span className={styles.login}>Settings</span>
+                                    </div>
+                                </Link>
+                            )}
+
+                            {isLoggedIn && (
+                                <div
+                                    className={styles.navModalLink}
+                                    onClick={() => {
+                                        auth.signOut();
+                                        resetToHomeState();
+                                    }}
+                                >
+                                    <span>Log out</span>
                                 </div>
-                            </Link>
-                            <div
-                                className={styles.navModalLink}
-                                onClick={() => {
-                                    auth.signOut();
-                                    resetToHomeState();
-                                }}
-                            >
-                                <span>Log out</span>
-                            </div>
-                            {!isSubscriber && (
+                            )}
+
+                            {!isLoggedIn && (
+                                <span
+                                    className={styles.loginButton}
+                                    onClick={() => setLoginModalActive(true)}
+                                >
+                                    Log in
+                                </span>
+                            )}
+
+                            {!isLoggedIn && (
+                                <Link
+                                    to="/register"
+                                    className={styles.loginButton}
+                                    style={{ textDecoration: "none" }}
+                                >
+                                    <span className={styles.register}>Sign Up</span>
+                                </Link>
+                            )}
+
+                            {isLoggedIn && !isSubscriber && (
                                 <span className={styles.tokenCountText}>
                                     Account Tokens: {accountTokens}
                                 </span>
                             )}
-                            {isSubscriber && (
+                            {isLoggedIn && isSubscriber && (
                                 <span className={styles.tokenCountText}>Pay-Per-Image Plan</span>
                             )}
                         </div>
                     )}
 
-                    {!isLoggedIn ? (
-                        <div className={styles.account}>
-                            <span
-                                className={styles.login}
-                                onClick={() => setLoginModalActive(true)}
-                            >
-                                Log in
-                            </span>
-                            <Link to="/register" style={{ textDecoration: "none" }}>
-                                <span className={styles.register}>Sign Up</span>
-                            </Link>
+                    <div className={styles.account}>
+                        <div
+                            className={styles.queryContainer}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (navOverlayShown) setNavOverlayShown(false);
+                                else setNavOverlayShown(true);
+                            }}
+                        >
+                            <span>Menu</span>
                         </div>
-                    ) : (
-                        <div className={styles.account}>
-                            <div
-                                className={styles.queryContainer}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (navOverlayShown) setNavOverlayShown(false);
-                                    else setNavOverlayShown(true);
-                                }}
-                            >
-                                <span>Menu</span>
-                            </div>
-                        </div>
-                    )}
+                    </div>
                 </div>
             )}
 

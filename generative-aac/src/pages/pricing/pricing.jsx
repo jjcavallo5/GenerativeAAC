@@ -1,23 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./pricing.module.css";
 import { useNavigate } from "react-router-dom";
 import IconArrowBackOutline from "../../icons/arrowBack";
+import LoginModal from "../../components/Modal/LoginModal";
+import { getCurrentUserEmail } from "../../backend/authFunctions";
 
 const PricingPage = () => {
+    const [loginModalActive, setLoginModalActive] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
 
-    const updateUsage = () => {
-        fetch("http://localhost:4242/update-usage", {
-            method: "POST",
-            body: JSON.stringify({
-                subscription_id: "si_OFZmeeMr5eqVdb",
-                usage: 1,
-            }),
-        });
-    };
+    useEffect(() => {
+        try {
+            getCurrentUserEmail();
+            setIsLoggedIn(true);
+        } catch (Error) {
+            setIsLoggedIn(false);
+        }
+    });
 
     return (
         <div className={styles.pageContainer}>
+            <LoginModal active={loginModalActive} deactivate={() => setLoginModalActive(false)} />
+
             <div className={styles.headerContainer}>
                 <IconArrowBackOutline className={styles.back} onClick={() => navigate("/")} />
                 <h1>Pricing</h1>
@@ -27,7 +32,12 @@ const PricingPage = () => {
                     <h2>Small Image Package</h2>
                     <p>500 generated images</p>
                     <p className={styles.price}>$10</p>
-                    <button onClick={() => navigate("/checkout?item=smallImagePackage")}>
+                    <button
+                        onClick={() => {
+                            if (isLoggedIn) navigate("/checkout?item=smallImagePackage");
+                            else setLoginModalActive(true);
+                        }}
+                    >
                         Get Started
                     </button>
                 </div>
@@ -35,7 +45,12 @@ const PricingPage = () => {
                     <h2>Large Image Package</h2>
                     <p>1500 generated images</p>
                     <p className={styles.price}>$25</p>
-                    <button onClick={() => navigate("/checkout?item=largeImagePackage")}>
+                    <button
+                        onClick={() => {
+                            if (isLoggedIn) navigate("/checkout?item=largeImagePackage");
+                            else setLoginModalActive(true);
+                        }}
+                    >
                         Get Started
                     </button>
                 </div>
@@ -43,7 +58,12 @@ const PricingPage = () => {
                     <h2>Pay-as-you-go</h2>
                     <p>Save images on your account</p>
                     <p className={styles.price}>$0.10/image</p>
-                    <button onClick={() => navigate("/checkout?item=subscription")}>
+                    <button
+                        onClick={() => {
+                            if (isLoggedIn) navigate("/checkout?item=subscription");
+                            else setLoginModalActive(true);
+                        }}
+                    >
                         Get Started
                     </button>
                 </div>

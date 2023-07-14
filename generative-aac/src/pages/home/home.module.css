@@ -34,7 +34,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .scrollable {
@@ -147,13 +147,20 @@
     letter-spacing: -0.5px;
 }
 
+.loginButton {
+    padding: 0.5rem;
+    color: var(--text);
+}
+
 .addBreak {
     border-top: 1px solid var(--text);
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
-.navModalLink:hover {
+.navModalLink:hover,
+.loginButton:hover,
+.register:hover {
     cursor: pointer;
     background-color: var(--background);
 }
@@ -224,8 +231,8 @@
 
 .toggleSidebarClose {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 1.6rem;
+    right: 1.6rem;
     z-index: 2;
 }
 

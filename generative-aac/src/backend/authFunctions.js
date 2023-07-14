@@ -21,7 +21,8 @@ export const loginUser = async (email, pass) => {
 };
 
 export const getCurrentUserEmail = () => {
-    return auth.currentUser.email;
+    if (auth.currentUser) return auth.currentUser.email;
+    else throw new Error("User not logged in");
 };
 
 export const isUserLoggedIn = async () => {
