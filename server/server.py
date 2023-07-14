@@ -213,11 +213,14 @@ def webhook():
 
     elif event['type'] == 'invoice.paid':
         if event.data.object.total == 0:
+            print("Total of 0 success")
             return jsonify(success=True)
 
         item_id = event.data.object.lines.data[0].subscription_item
         ref = db.collection("subscription").document(item_id)
         ref.update({"subscriptionUsage": 0})
+        print("Reset Usage")
+
         # handle_payment_method_attached(payment_method)
     else:
         # Unexpected event type

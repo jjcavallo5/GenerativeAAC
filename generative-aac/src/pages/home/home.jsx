@@ -142,7 +142,9 @@ function HomePage() {
                 .catch((error) => console.error(error));
             getImageTokenCount().then((tokens) => setAccountTokens(tokens));
             getSubscriptionID()
-                .then((subID) => setIsSubscriber(true))
+                .then((subID) => {
+                    if (subID) setIsSubscriber(true);
+                })
                 .catch((error) => setIsSubscriber(false));
         }
     }, [auth, isLoggedIn]);

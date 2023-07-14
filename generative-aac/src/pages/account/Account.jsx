@@ -5,16 +5,18 @@ import IconArrowBackOutline from "../../icons/arrowBack";
 import { getImageTokenCount, getSubscriptionID } from "../../backend/firestoreFunctions";
 
 function AccountPage() {
-    const [isSubscriber, setIsSubscriber] = useState(false)
-    const [accountTokens, setAccountTokens] = useState(0)
+    const [isSubscriber, setIsSubscriber] = useState(false);
+    const [accountTokens, setAccountTokens] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
-        getImageTokenCount().then((tokens) => setAccountTokens(tokens))
+        getImageTokenCount().then((tokens) => setAccountTokens(tokens));
         getSubscriptionID()
-            .then((subID) => setIsSubscriber(true))
+            .then((subID) => {
+                if (subID) setIsSubscriber(true);
+            })
             .catch((error) => setIsSubscriber(false));
-    }, [])
+    }, []);
 
     return (
         <div className={styles.pageContainer}>
@@ -25,11 +27,11 @@ function AccountPage() {
                 </div>
                 <p className={styles.subheader}>Manage your account</p>
                 <div className={styles.details}>
-                    {isSubscriber ?
+                    {isSubscriber ? (
                         <span>Pay-Per-Image Subscription Active</span>
-                        :
+                    ) : (
                         <span>Image Tokens: {accountTokens}</span>
-                    }
+                    )}
                 </div>
             </div>
         </div>
