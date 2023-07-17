@@ -4,7 +4,6 @@ import { getCurrentUserEmail } from "../../backend/authFunctions";
 import { storeSubscriptionID } from "../../backend/firestoreFunctions";
 import styles from "./CheckoutForm.module.css";
 
-import Modal from "../../components/Modal/Modal";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../animations/loading.json";
 

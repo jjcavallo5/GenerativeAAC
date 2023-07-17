@@ -8,7 +8,7 @@ from firebase_admin import firestore
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 
-cred = credentials.Certificate('server/service-account-key.json')
+cred = credentials.Certificate('service-account-key.json')
 app = firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -234,4 +234,5 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=log_usage_daily, trigger="interval", hours=1)
     scheduler.start()
-    app.run(port=4242)
+    # app.run(port=4242)
+    app.run()

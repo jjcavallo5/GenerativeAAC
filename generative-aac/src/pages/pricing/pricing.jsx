@@ -17,7 +17,7 @@ const PricingPage = () => {
         } catch (Error) {
             setIsLoggedIn(false);
         }
-    });
+    }, []);
 
     return (
         <div className={styles.pageContainer}>
