@@ -131,22 +131,20 @@ function HomePage() {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 setIsLoggedIn(true);
+
+                getSavedQueries()
+                    .then((queries) => setPreviousQueries(queries))
+                    .catch((error) => console.error(error));
+                getImageTokenCount().then((tokens) => setAccountTokens(tokens));
+                getSubscriptionID()
+                    .then((subID) => {
+                        if (subID) setIsSubscriber(true);
+                    })
+                    .catch((error) => setIsSubscriber(false));
             } else {
                 setIsLoggedIn(false);
             }
         });
-
-        if (isLoggedIn) {
-            getSavedQueries()
-                .then((queries) => setPreviousQueries(queries))
-                .catch((error) => console.error(error));
-            getImageTokenCount().then((tokens) => setAccountTokens(tokens));
-            getSubscriptionID()
-                .then((subID) => {
-                    if (subID) setIsSubscriber(true);
-                })
-                .catch((error) => setIsSubscriber(false));
-        }
     }, [auth, isLoggedIn]);
 
     const QueryList = () => {
@@ -247,7 +245,7 @@ function HomePage() {
 
                             {isLoggedIn && !isSubscriber && (
                                 <span className={styles.tokenCountText}>
-                                    Account Tokens: {accountTokens}
+                                    Image Tokens: {accountTokens}
                                 </span>
                             )}
                             {isLoggedIn && isSubscriber && (

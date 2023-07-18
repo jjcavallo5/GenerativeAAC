@@ -3,11 +3,17 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Account.module.css";
 import IconArrowBackOutline from "../../icons/arrowBack";
 import { getImageTokenCount, getSubscriptionID } from "../../backend/firestoreFunctions";
+import Modal from "../../components/Modal/Modal";
 
 function AccountPage() {
     const [isSubscriber, setIsSubscriber] = useState(false);
     const [accountTokens, setAccountTokens] = useState(0);
+    const [modalActive, setModalActive] = useState(false)
     const navigate = useNavigate();
+
+    const handleSubscriptionCancel = () => {
+        console.log("cancel")
+    }
 
     useEffect(() => {
         getImageTokenCount().then((tokens) => setAccountTokens(tokens));
@@ -25,12 +31,29 @@ function AccountPage() {
                     <IconArrowBackOutline className={styles.back} onClick={() => navigate("/")} />
                     <h1>Account</h1>
                 </div>
+                <Modal active={modalActive} deactivate={() => setModalActive(false)}>
+                    <div className={styles.modal}>
+                        <h2>Are you sure?</h2>
+                        <p>After cancelling your subscriptions you will need tokens to generate new images</p>
+                        <div className={styles.modalButtonContainer}>
+                            <button onClick={() => handleSubscriptionCancel()}>Cancel Subscription</button>
+                            <button onClick={() => setModalActive(false)}>Keep Subscription</button>
+                        </div>
+                    </div>
+                </Modal>
                 <p className={styles.subheader}>Manage your account</p>
                 <div className={styles.details}>
                     {isSubscriber ? (
-                        <span>Pay-Per-Image Subscription Active</span>
+                        <div className={styles.subscriptionContainer}>
+                            <span>Pay-Per-Image Subscription Active</span>
+                            <button onClick={() => setModalActive(true)}>Cancel Subscription</button>
+                        </div>
                     ) : (
-                        <span>Image Tokens: {accountTokens}</span>
+                        <div className={styles.subscriptionContainer}>
+                            <span>{accountTokens} Image Tokens Remaining</span>
+                            <button onClick={() => navigate('/pricing')}>Get More Tokens</button>
+                        </div>
+                        
                     )}
                 </div>
             </div>
