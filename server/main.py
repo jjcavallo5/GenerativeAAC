@@ -20,7 +20,7 @@ app = Flask(__name__,
             static_url_path='',
             static_folder='public')
 
-DOMAIN = 'http://localhost:3000'
+DOMAINS = ['https://generativeaac.com', 'http://localhost:3000']
 SMALL_PACKAGE_PRICE = 1000
 LARGE_PACKAGE_PRICE = 2500
 SMALL_PACKAGE_COUNT = 500
@@ -31,19 +31,28 @@ def get_price(item):
         return SMALL_PACKAGE_PRICE
     elif item == 'largeImagePackage':
         return LARGE_PACKAGE_PRICE
+    
+def handle_cors(request_origin, response):
+    if request_origin in DOMAINS:
+        response.headers.add('Access-Control-Allow-Origin', request_origin)
+        return response
+
+    else:
+        return response
 
 @app.before_request
 def handle_preflight():
     if request.method == "OPTIONS":
         print("options req")
         res = Response()
-        res.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+        res = handle_cors(request.origin, res)
         res.headers.add('Access-Control-Allow-Headers', 'Content-Type')
 
         return res
     
 @app.route('/hugging-face-api', methods=['POST'])
 def hugging_face_api():
+    print(request.origin)
     data = json.loads(request.data)
     API_URL = "https://api-inference.huggingface.co/models/jjcavallo5/generative_aac"
     headers = {"Authorization": f"Bearer {config.HF_API_KEY}"}
@@ -55,7 +64,7 @@ def hugging_face_api():
         status=response.status_code
     )
 
-    response.headers.add('Access-Control-Allow-Origin', DOMAIN)
+    response = handle_cors(request.origin, response)
     response.headers.add("access-control-expose-headers", "x-compute-type, x-compute-time")
     response.headers['content-type'] = 'image/jpeg'
 
@@ -85,12 +94,13 @@ def create_subscription():
         )
         print(subscription.pending_setup_intent.client_secret)
         response = jsonify(subscriptionId=subscription['items'].data[0].id, clientSecret=subscription.pending_setup_intent.client_secret)
-        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+        response = handle_cors(request.origin, response)
+
         return response
 
     except Exception as e:
         response = jsonify(error={'message': e.user_message}), 400
-        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+        response = handle_cors(request.origin, response)
 
         return response
 
@@ -168,12 +178,12 @@ def create_payment():
         response = jsonify({
             'clientSecret': intent['client_secret']
         })
-        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+        response = handle_cors(request.origin, response)
         return response
     except Exception as e:
         print("Fail")
         response = jsonify(error=str(e)), 403
-        response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
+        response = handle_cors(request.origin, response)
 
         return response
 
@@ -234,5 +244,5 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=log_usage_daily, trigger="interval", hours=1)
     scheduler.start()
-    # app.run(port=4242)
-    app.run()
+    app.run(port=4242)
+    # app.run()

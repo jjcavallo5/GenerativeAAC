@@ -12,6 +12,11 @@ export async function getHFImage(prompt) {
         body: JSON.stringify(data),
     });
 
+    // const response = await fetch("http://localhost:4242/hugging-face-api", {
+    //     method: "POST",
+    //     body: JSON.stringify(data),
+    // });
+
     const result = await response.blob();
     return result;
 }
