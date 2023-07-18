@@ -74,8 +74,13 @@ def create_subscription():
             payment_settings={'save_default_payment_method': 'on_subscription'},
             expand=['pending_setup_intent'],
         )
+        print("sub id: ", subscription.id)
         print(subscription.pending_setup_intent.client_secret)
-        response = jsonify(subscriptionId=subscription['items'].data[0].id, clientSecret=subscription.pending_setup_intent.client_secret)
+        response = jsonify(
+            subscriptionID=subscription.id,
+            subscriptionItemId=subscription['items'].data[0].id, 
+            clientSecret=subscription.pending_setup_intent.client_secret
+            )
         response = utilities.handle_cors(request.origin, response)
 
         return response
@@ -143,6 +148,21 @@ def create_payment():
 
         return response
 
+@app.route('/cancel-subscription', methods=['POST'])
+def cancelSubscription():
+    data = json.loads(request.data)
+    print(data['subscriptionId'])
+    try:
+         # Cancel the subscription by deleting it
+        deletedSubscription = stripe.Subscription.delete(data['subscriptionId'])
+        print('cancelled')
+        response = jsonify(deletedSubscription)
+        response = utilities.handle_cors(request.origin, response)
+
+        return response
+    except Exception as e:
+        print("error")
+        return jsonify(error=str(e)), 403
 
 
 @app.route('/webhook', methods=['POST'])
@@ -198,5 +218,5 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=log_usage_daily, trigger="interval", hours=24)
     scheduler.start()
-    # app.run(port=4242)
-    app.run()
+    app.run(port=4242)
+    # app.run()

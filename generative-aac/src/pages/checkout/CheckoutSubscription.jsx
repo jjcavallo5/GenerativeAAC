@@ -48,9 +48,9 @@ export default function CheckoutSubscription() {
             body: JSON.stringify(data),
         });
 
-        const { subscriptionId, clientSecret } = await res.json();
+        const { subscriptionID, subscriptionItemId, clientSecret } = await res.json();
 
-        storeSubscriptionID(subscriptionId);
+        storeSubscriptionID(subscriptionID, subscriptionItemId);
 
         // Confirm the Subscription using the details collected by the Payment Element
         const { error } = await stripe.confirmSetup({
@@ -60,7 +60,7 @@ export default function CheckoutSubscription() {
                 return_url: "http://localhost:3000/success",
             },
         });
-
+        
         if (error) {
             // This point is only reached if there's an immediate error when
             // confirming the payment. Show the error to your customer (for example, payment details incomplete)

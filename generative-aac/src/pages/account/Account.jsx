@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Account.module.css";
 import IconArrowBackOutline from "../../icons/arrowBack";
-import { getImageTokenCount, getSubscriptionID } from "../../backend/firestoreFunctions";
+import { getImageTokenCount, getSubscriptionID, cancelSubscription } from "../../backend/firestoreFunctions";
 import Modal from "../../components/Modal/Modal";
 
 function AccountPage() {
@@ -12,7 +12,9 @@ function AccountPage() {
     const navigate = useNavigate();
 
     const handleSubscriptionCancel = () => {
-        console.log("cancel")
+        cancelSubscription().then(() => {
+            console.log('cancelled subscription')
+        })
     }
 
     useEffect(() => {

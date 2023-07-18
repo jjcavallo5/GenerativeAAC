@@ -84,18 +84,27 @@ export const getSavedQueries = async () => {
     return docSnap.get("imageURLs").reverse();
 };
 
-export const storeSubscriptionID = async (subscriptionID) => {
+export const storeSubscriptionID = async (subscriptionID, subscriptionItemID) => {
     let userEmail = getCurrentUserEmail();
     let docRef = doc(db, "users", userEmail);
 
-    await setDoc(doc(db, "subscriptions", subscriptionID), {
+    await setDoc(doc(db, "subscriptions", subscriptionItemID), {
         email: userEmail,
         subscriptionUsage: 0,
     });
 
     updateDoc(docRef, {
         subscriptionID: subscriptionID,
+        subscriptionItemID: subscriptionItemID
     }).then((snap) => console.log("Added subscription ID"));
+};
+
+export const getSubscriptionItemID = async () => {
+    let userEmail = getCurrentUserEmail();
+    let docRef = doc(db, "users", userEmail);
+
+    const docSnap = await getDoc(docRef);
+    return docSnap.get("subscriptionItemID");
 };
 
 export const getSubscriptionID = async () => {
@@ -107,10 +116,25 @@ export const getSubscriptionID = async () => {
 };
 
 export const incrementSubscriptionUsage = async () => {
-    let subscriptionID = await getSubscriptionID();
+    let subscriptionID = await getSubscriptionItemID();
     let docRef = doc(db, "subscriptions", subscriptionID);
 
     updateDoc(docRef, {
         subscriptionUsage: increment(1),
     }).then((snap) => console.log("Incremented"));
 };
+
+export const cancelSubscription = async () => {
+    let subID = await getSubscriptionID()
+    let response = await fetch('http://localhost:4242/cancel-subscription', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            subscriptionId: subID,
+        }),
+    })
+    let jsonResponse = await response.json()
+    console.log(jsonResponse)
+}
