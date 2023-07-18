@@ -8,6 +8,7 @@ import {
     arrayUnion,
     arrayRemove,
     increment,
+    deleteField
 } from "firebase/firestore";
 import { getCurrentUserEmail } from "./authFunctions";
 
@@ -126,7 +127,7 @@ export const incrementSubscriptionUsage = async () => {
 
 export const cancelSubscription = async () => {
     let subID = await getSubscriptionID()
-    let response = await fetch('http://localhost:4242/cancel-subscription', {
+    await fetch('http://localhost:4242/cancel-subscription', {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',
@@ -135,6 +136,11 @@ export const cancelSubscription = async () => {
             subscriptionId: subID,
         }),
     })
-    let jsonResponse = await response.json()
-    console.log(jsonResponse)
+
+    let userEmail = getCurrentUserEmail();
+    let docRef = doc(db, "users", userEmail);
+    updateDoc(docRef, {
+        subscriptionID: deleteField(),
+        subscriptionItemID: deleteField()
+    }).then((snap) => console.log("Deleted subscription from profile"));
 }

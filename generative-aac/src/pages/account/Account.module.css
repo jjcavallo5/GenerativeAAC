@@ -68,3 +68,8 @@ html {
 .subscriptionContainer span {
     align-self: center;
 }
+
+.loadingAnimation {
+    height: 100px;
+    width: 100px;
+}
