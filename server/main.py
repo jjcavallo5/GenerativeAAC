@@ -8,44 +8,26 @@ from firebase_admin import firestore
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 
+import stripe
+import utilities
+
 cred = credentials.Certificate('service-account-key.json')
+endpoint_secret = config.STRIPE_WEBHOOK_ENDPOINT_SECRET
 app = firebase_admin.initialize_app(cred)
 db = firestore.client()
-
-import stripe
-
 stripe.api_key = config.STRIPE_API_SECRET_KEY
 
-app = Flask(__name__,
-            static_url_path='',
-            static_folder='public')
-
-DOMAINS = ['https://generativeaac.com', 'http://localhost:3000']
-SMALL_PACKAGE_PRICE = 1000
-LARGE_PACKAGE_PRICE = 2500
-SMALL_PACKAGE_COUNT = 500
-LARGE_PACKAGE_COUNT = 1500
-
-def get_price(item):
-    if item == 'smallImagePackage':
-        return SMALL_PACKAGE_PRICE
-    elif item == 'largeImagePackage':
-        return LARGE_PACKAGE_PRICE
-    
-def handle_cors(request_origin, response):
-    if request_origin in DOMAINS:
-        response.headers.add('Access-Control-Allow-Origin', request_origin)
-        return response
-
-    else:
-        return response
+app = Flask(
+    __name__,
+    static_url_path='',
+    static_folder='public'
+)
 
 @app.before_request
 def handle_preflight():
     if request.method == "OPTIONS":
-        print("options req")
         res = Response()
-        res = handle_cors(request.origin, res)
+        res = utilities.handle_cors(request.origin, res)
         res.headers.add('Access-Control-Allow-Headers', 'Content-Type')
 
         return res
@@ -64,7 +46,7 @@ def hugging_face_api():
         status=response.status_code
     )
 
-    response = handle_cors(request.origin, response)
+    response = utilities.handle_cors(request.origin, response)
     response.headers.add("access-control-expose-headers", "x-compute-type, x-compute-time")
     response.headers['content-type'] = 'image/jpeg'
 
@@ -94,41 +76,15 @@ def create_subscription():
         )
         print(subscription.pending_setup_intent.client_secret)
         response = jsonify(subscriptionId=subscription['items'].data[0].id, clientSecret=subscription.pending_setup_intent.client_secret)
-        response = handle_cors(request.origin, response)
+        response = utilities.handle_cors(request.origin, response)
 
         return response
 
     except Exception as e:
         response = jsonify(error={'message': e.user_message}), 400
-        response = handle_cors(request.origin, response)
+        response = utilities.handle_cors(request.origin, response)
 
         return response
-
-
-
-# @app.route('/update-usage', methods=['POST'])
-# def update_usage():
-#     data = json.loads(request.data)
-#     subscription_item_id = data['subscription_id']
-#     usage_quantity = data['usage']
-
-#     timestamp = int(time.time())
-
-#     try:
-#         stripe.SubscriptionItem.create_usage_record(
-#             subscription_item_id,
-#             quantity=usage_quantity,
-#             timestamp=timestamp,
-#             action='increment',
-#         )
-#         print("Updated state")
-#         response = Response()
-#         response.headers.add('Access-Control-Allow-Origin', f'{DOMAIN}')
-#         return response
-#     except stripe.error.StripeError as e:
-#         print('Usage report failed for item ID %s with idempotency key: %s' %
-#         (subscription_item_id, e.error.message))
-#         pass
 
 def update_usage(subscription_id, usage_quantity):
 
@@ -165,7 +121,7 @@ def create_payment():
 
         # Create a PaymentIntent with the order amount and currency
         intent = stripe.PaymentIntent.create(
-            amount=get_price(data['item']),
+            amount=utilities.get_price(data['item']),
             currency='usd',
             automatic_payment_methods={
                 'enabled': True,
@@ -178,17 +134,16 @@ def create_payment():
         response = jsonify({
             'clientSecret': intent['client_secret']
         })
-        response = handle_cors(request.origin, response)
+        response = utilities.handle_cors(request.origin, response)
         return response
     except Exception as e:
         print("Fail")
         response = jsonify(error=str(e)), 403
-        response = handle_cors(request.origin, response)
+        response = utilities.handle_cors(request.origin, response)
 
         return response
 
 
-endpoint_secret = config.STRIPE_WEBHOOK_ENDPOINT_SECRET
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -219,7 +174,7 @@ def webhook():
         print(f"User: {payment_intent['metadata']['userEmail']}")
         doc = payment_intent['metadata']['userEmail']
 
-        incrementBy = SMALL_PACKAGE_COUNT if payment_intent['amount'] == SMALL_PACKAGE_PRICE else LARGE_PACKAGE_COUNT
+        incrementBy = utilities.SMALL_PACKAGE_COUNT if payment_intent['amount'] == utilities.SMALL_PACKAGE_PRICE else utilities.LARGE_PACKAGE_COUNT
         ref = db.collection("users").document(doc)
         ref.update({"imageTokenCount": firestore.Increment(incrementBy)})
 
@@ -233,7 +188,6 @@ def webhook():
         ref.update({"subscriptionUsage": 0})
         print("Reset Usage")
 
-        # handle_payment_method_attached(payment_method)
     else:
         # Unexpected event type
         print('Unhandled event type {}'.format(event['type']))
@@ -242,7 +196,7 @@ def webhook():
 
 if __name__ == '__main__':
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=log_usage_daily, trigger="interval", hours=1)
+    scheduler.add_job(func=log_usage_daily, trigger="interval", hours=24)
     scheduler.start()
-    app.run(port=4242)
-    # app.run()
+    # app.run(port=4242)
+    app.run()
