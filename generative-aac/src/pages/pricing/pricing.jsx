@@ -3,9 +3,10 @@ import styles from "./pricing.module.css";
 import { useNavigate } from "react-router-dom";
 import IconArrowBackOutline from "../../icons/arrowBack";
 import LoginModal from "../../components/Modal/LoginModal";
-import { getCurrentUserEmail } from "../../backend/authFunctions";
 import { getSubscriptionID } from "../../backend/firestoreFunctions";
 import Modal from "../../components/Modal/Modal";
+import { onAuthStateChanged, getAuth } from "firebase/auth";
+
 
 const PricingPage = () => {
     const [loginModalActive, setLoginModalActive] = useState(false);
@@ -13,20 +14,24 @@ const PricingPage = () => {
     const [isSubscriber, setIsSubscriber] = useState(false);
     const [isSubscriberModalActive, setIsSubscriberModalActive] = useState(false)
     const navigate = useNavigate();
+    const auth = getAuth();
 
     useEffect(() => {
-        try {
-            getCurrentUserEmail();
-            setIsLoggedIn(true);
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setIsLoggedIn(true);
 
-            getSubscriptionID().then(id => {
-                if (id) setIsSubscriber(true)
-                else setIsSubscriber(false)
-            })
-        } catch (Error) {
-            setIsLoggedIn(false);
-        }
-    }, []);
+                getSubscriptionID()
+                    .then((subID) => {
+                        if (subID) setIsSubscriber(true);
+                        else setIsSubscriber(false)
+                    })
+                    .catch((error) => setIsSubscriber(false));
+            } else {
+                setIsLoggedIn(false);
+            }
+        });
+    }, [auth]);
 
     return (
         <div className={styles.pageContainer}>
