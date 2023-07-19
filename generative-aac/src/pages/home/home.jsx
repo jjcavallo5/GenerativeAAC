@@ -13,7 +13,6 @@ import {
 } from "../../backend/firestoreFunctions";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { deleteImage } from "../../backend/storageFunctions";
-import OldQuery from "../../components/OldQueries/OldQuery";
 import loadingAnimation from "../../animations/loading.json";
 import Lottie from "lottie-react";
 import QueryList from "../../components/QueryList/QueryList";
@@ -31,7 +30,6 @@ function HomePage() {
     const [previousQueries, setPreviousQueries] = useState([]);
     const [selectedQuery, setSelectedQuery] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const [search, setSearch] = useState("")
     const [loginModalActive, setLoginModalActive] = useState(false);
     const [accountTokens, setAccountTokens] = useState(0);
     const [isSubscriber, setIsSubscriber] = useState(false);
@@ -149,40 +147,6 @@ function HomePage() {
             }
         });
     }, [auth, isLoggedIn]);
-
-    // const QueryList = () => {
-    //     return (
-    //         <div className={styles.oldQueryList}>
-    //             <div className={styles.oldQueriesHeaderContainer}>
-    //                 <p className={styles.oldQueriesHeader}>Previous</p>
-    //             </div>
-
-    //             <div className={styles.searchContainer}>
-    //                 <input 
-    //                     type="text" 
-    //                     placeholder="Search" 
-    //                     className={styles.searchBar} 
-    //                     value={search}
-    //                     onChange={(e) => setSearch(e.target.value)}
-    //                 />
-    //             </div>
-
-    //             <div className={styles.scrollable}>
-    //                 {previousQueries.map((query, i) => {
-    //                     return (
-    //                         <OldQuery
-    //                             query={query}
-    //                             onSelect={handleOldQuerySelection}
-    //                             onDeleteSelected={handleDeleteOldQuery}
-    //                             isSelected={selectedQuery === query.url}
-    //                             key={i}
-    //                         />
-    //                     );
-    //                 })}
-    //             </div>
-    //         </div>
-    //     );
-    // };
 
     return (
         <div className={styles.pageContainer} onClick={() => setNavOverlayShown(false)}>

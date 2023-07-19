@@ -126,7 +126,7 @@ export const incrementSubscriptionUsage = async () => {
 
 export const cancelSubscription = async () => {
     let subID = await getSubscriptionID()
-    await fetch('http://localhost:4242/cancel-subscription', {
+    await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/cancel-subscription`, {
         method: 'post',
         headers: {
             'Content-Type': 'application/json',

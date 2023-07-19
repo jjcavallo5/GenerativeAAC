@@ -21,7 +21,7 @@ const CheckoutPage = () => {
     useEffect(() => {
         if (item !== "subscription") {
             // Create PaymentIntent as soon as the page loads
-            fetch("http://localhost:4242/create-payment-intent", {
+            fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/create-payment-intent`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -55,7 +55,6 @@ const CheckoutPage = () => {
             mode: "subscription",
             amount: 100,
             currency: "usd",
-            // Fully customizable with appearance API.
             appearance: { ...appearance },
         };
 

@@ -42,7 +42,7 @@ export default function CheckoutSubscription() {
         // Create the Subscription
         let data = { email: getCurrentUserEmail() };
         console.log(data);
-        const res = await fetch("http://localhost:4242/create-subscription", {
+        const res = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/create-subscription`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),

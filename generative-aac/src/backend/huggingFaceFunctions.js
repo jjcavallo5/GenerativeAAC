@@ -7,15 +7,10 @@ export async function getHFImage(prompt) {
         },
     };
 
-    const response = await fetch("https://generativeaac.uc.r.appspot.com/hugging-face-api", {
+    const response = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/hugging-face-api`, {
         method: "POST",
         body: JSON.stringify(data),
     });
-
-    // const response = await fetch("http://localhost:4242/hugging-face-api", {
-    //     method: "POST",
-    //     body: JSON.stringify(data),
-    // });
 
     const result = await response.blob();
     return result;
