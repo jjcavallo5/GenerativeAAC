@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Account.module.css";
 import IconArrowBackOutline from "../../icons/arrowBack";
-import { getImageTokenCount, getSubscriptionID, cancelSubscription } from "../../backend/firestoreFunctions";
+import { getImageTokenCount, getSubscriptionID, cancelSubscription, getSubscriptionDueDate, getSubscriptionUsage } from "../../backend/firestoreFunctions";
 import Modal from "../../components/Modal/Modal";
 import loadingAnimation from "../../animations/loading.json";
 import Lottie from "lottie-react";
@@ -13,6 +13,8 @@ function AccountPage() {
     const [modalActive, setModalActive] = useState(false);
     const [loading, setLoading] = useState(false)
     const [cancelled, setCancelled] = useState(false)
+    const [subscriptionDue, setSubscriptionDue] = useState(0)
+    const [subscriptionUsage, setSubscriptionUsage] = useState(0)
     const navigate = useNavigate();
 
     const handleSubscriptionCancel = () => {
@@ -23,6 +25,12 @@ function AccountPage() {
         })
     }
 
+    const getDate = () => {
+        let date = new Date(subscriptionDue * 1000)
+        
+        return date.toLocaleDateString(subscriptionDue)
+    }
+
     useEffect(() => {
         getImageTokenCount().then((tokens) => setAccountTokens(tokens));
         getSubscriptionID()
@@ -31,11 +39,15 @@ function AccountPage() {
                 else setIsSubscriber(false)
             })
             .catch((error) => setIsSubscriber(false));
-    }, [cancelled]);
+
+        if (isSubscriber) {
+            getSubscriptionDueDate().then(due => setSubscriptionDue(due))
+            getSubscriptionUsage().then(usage => setSubscriptionUsage(usage))
+        }
+    }, [cancelled, isSubscriber]);
 
     return (
         <div className={styles.pageContainer}>
-            <div className={styles.loginContainer}>
                 <div className={styles.header}>
                     <IconArrowBackOutline className={styles.back} onClick={() => navigate("/")} />
                     <h1>Account</h1>
@@ -70,7 +82,24 @@ function AccountPage() {
                 <div className={styles.details}>
                     {isSubscriber ? (
                         <div className={styles.subscriptionContainer}>
-                            <span>Pay-Per-Image Subscription Active</span>
+                            <h2>Pay-Per-Image Subscription Active</h2>
+                            <div className={styles.subscriptionDetails}>
+                                <p>Subscription Details</p>
+                                <table>
+                                    <tr>
+                                        <td>Images Generated</td>
+                                        <td>{subscriptionUsage}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Estimated Cost</td>
+                                        <td>${(subscriptionUsage * 0.10).toFixed(2)}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Next Payment</td>
+                                        <td>{getDate()}</td>
+                                    </tr>
+                                </table>
+                            </div>
                             <button onClick={() => setModalActive(true)}>Cancel Subscription</button>
                         </div>
                     ) : (
@@ -81,7 +110,6 @@ function AccountPage() {
                         
                     )}
                 </div>
-            </div>
         </div>
     );
 }

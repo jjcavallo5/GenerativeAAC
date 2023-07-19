@@ -165,6 +165,20 @@ def cancelSubscription():
     except Exception as e:
         print("error")
         return jsonify(error=str(e)), 403
+    
+@app.route('/get-subscription-due-date', methods=['POST'])
+def getSubscriptionDueDate():
+    data = json.loads(request.data)
+    subID = data['subscriptionId']
+
+    try:
+        upcoming_invoice = stripe.Invoice.upcoming(subscription=subID)
+        response = jsonify(date=upcoming_invoice['period_end'])
+        
+        response = utilities.handle_cors(request.origin, response)
+        return response
+    except Exception as e:
+        return jsonify(error=str(e)), 403
 
 
 @app.route('/webhook', methods=['POST'])

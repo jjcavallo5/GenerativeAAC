@@ -5,8 +5,8 @@ html {
 .pageContainer {
     color: var(--text);
     display: flex;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
 }
 
 .header {
@@ -15,13 +15,15 @@ html {
     justify-content: center;
     align-items: center;
     position: relative;
+    width: fit-content;
+    justify-self: center;
 }
 
 .back {
     position: absolute;
     height: 1.5rem;
     width: 1.5rem;
-    left: -1.5rem;
+    left: -3rem;
 }
 
 .back:hover {
@@ -72,4 +74,32 @@ html {
 .loadingAnimation {
     height: 100px;
     width: 100px;
+}
+
+.subscriptionDetails {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+}
+
+.subscriptionDetails p {
+    color: var(--text_alpha);
+    margin-top: 0;
+}
+
+td:nth-child(odd) {
+    text-align: left;
+}
+td:nth-child(even) {
+    text-align: right;
+}
+
+table {
+    border-top: 1px solid var(--accent);
+    border-bottom: 1px solid var(--accent);
+}
+
+td {
+    padding: 0.5rem;
 }

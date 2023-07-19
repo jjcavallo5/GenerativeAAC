@@ -115,6 +115,15 @@ export const getSubscriptionID = async () => {
     return docSnap.get("subscriptionID");
 };
 
+export const getSubscriptionUsage = async () => {
+    let subItemID = await getSubscriptionItemID()
+    let docRef = doc(db, "subscriptions", subItemID);
+
+    const docSnap = await getDoc(docRef);
+    return docSnap.get("subscriptionUsage");
+
+}
+
 export const incrementSubscriptionUsage = async () => {
     let subscriptionID = await getSubscriptionItemID();
     let docRef = doc(db, "subscriptions", subscriptionID);
@@ -137,4 +146,22 @@ export const cancelSubscription = async () => {
             subscriptionItemID: subItemID
         }),
     })
+}
+
+export const getSubscriptionDueDate = async () => {
+    let subID = await getSubscriptionID()
+
+    let response = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/get-subscription-due-date`, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            subscriptionId: subID
+        }),
+    })
+
+    response = await response.json()
+
+    return response.date
 }
