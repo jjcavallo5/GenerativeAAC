@@ -126,6 +126,7 @@ export const incrementSubscriptionUsage = async () => {
 
 export const cancelSubscription = async () => {
     let subID = await getSubscriptionID()
+    let subItemID = await getSubscriptionItemID()
     await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/cancel-subscription`, {
         method: 'post',
         headers: {
@@ -133,6 +134,7 @@ export const cancelSubscription = async () => {
         },
         body: JSON.stringify({
             subscriptionId: subID,
+            subscriptionItemID: subItemID
         }),
     })
 }

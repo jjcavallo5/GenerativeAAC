@@ -151,11 +151,13 @@ def create_payment():
 @app.route('/cancel-subscription', methods=['POST'])
 def cancelSubscription():
     data = json.loads(request.data)
-    print(data['subscriptionId'])
+    subItemID = data['subscriptionItemID']
+    usage = db.collection("subscriptions").document(subItemID).get().to_dict()['subscriptionUsage']
+    update_usage(subItemID, usage)
+
     try:
          # Cancel the subscription by deleting it
-        deletedSubscription = stripe.Subscription.delete(data['subscriptionId'])
-        print('cancelled')
+        deletedSubscription = stripe.Subscription.delete(data['subscriptionId'], invoice_now=True)
         response = jsonify(deletedSubscription)
         response = utilities.handle_cors(request.origin, response)
 
@@ -235,5 +237,5 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=log_usage_daily, trigger="interval", hours=24)
     scheduler.start()
-    app.run(port=4242)
-    # app.run()
+    # app.run(port=4242)
+    app.run()
