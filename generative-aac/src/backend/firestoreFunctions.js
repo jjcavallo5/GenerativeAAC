@@ -8,7 +8,6 @@ import {
     arrayUnion,
     arrayRemove,
     increment,
-    deleteField
 } from "firebase/firestore";
 import { getCurrentUserEmail } from "./authFunctions";
 
@@ -136,11 +135,4 @@ export const cancelSubscription = async () => {
             subscriptionId: subID,
         }),
     })
-
-    let userEmail = getCurrentUserEmail();
-    let docRef = doc(db, "users", userEmail);
-    updateDoc(docRef, {
-        subscriptionID: deleteField(),
-        subscriptionItemID: deleteField()
-    }).then((snap) => console.log("Deleted subscription from profile"));
 }

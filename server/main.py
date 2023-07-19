@@ -208,6 +208,23 @@ def webhook():
         ref.update({"subscriptionUsage": 0})
         print("Reset Usage")
 
+    elif event['type'] == 'customer.subscription.deleted':
+        customer_key = event['data']['object']['customer']
+        customer = stripe.Customer.retrieve(customer_key)
+        email = customer.email
+
+        ref = db.collection("users").document(email)
+        doc = ref.get().to_dict()
+        subItemID = doc['subscriptionItemID']
+
+        ref.update({
+            "subscriptionID": firestore.DELETE_FIELD,
+            "subscriptionItemID": firestore.DELETE_FIELD
+        })
+
+        db.collection("subscriptions").document(subItemID).delete()
+
+
     else:
         # Unexpected event type
         print('Unhandled event type {}'.format(event['type']))
