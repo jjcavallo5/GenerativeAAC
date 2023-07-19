@@ -139,6 +139,7 @@ function HomePage() {
                 getSubscriptionID()
                     .then((subID) => {
                         if (subID) setIsSubscriber(true);
+                        else setIsSubscriber(false)
                     })
                     .catch((error) => setIsSubscriber(false));
             } else {
