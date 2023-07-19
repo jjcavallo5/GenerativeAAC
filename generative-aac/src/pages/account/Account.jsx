@@ -40,7 +40,8 @@ function AccountPage() {
             })
             .catch((error) => setIsSubscriber(false));
 
-        if (isSubscriber) {
+        if (isSubscriber && !cancelled) {
+            console.log("Sub")
             getSubscriptionDueDate().then(due => setSubscriptionDue(due))
             getSubscriptionUsage().then(usage => setSubscriptionUsage(usage))
         }
@@ -80,7 +81,7 @@ function AccountPage() {
                 </Modal>
                 <p className={styles.subheader}>Manage your account</p>
                 <div className={styles.details}>
-                    {isSubscriber ? (
+                    {isSubscriber && !cancelled ? (
                         <div className={styles.subscriptionContainer}>
                             <h2>Pay-Per-Image Subscription Active</h2>
                             <div className={styles.subscriptionDetails}>
