@@ -8,7 +8,6 @@ import {
     deleteImageFromList,
     decrementImageTokens,
     getImageTokenCount,
-    getSubscriptionID,
     incrementSubscriptionUsage,
     getSubscriptionActive,
 } from "../../backend/firestoreFunctions";

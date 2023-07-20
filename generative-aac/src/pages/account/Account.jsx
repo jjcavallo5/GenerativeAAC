@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Account.module.css";
 import IconArrowBackOutline from "../../icons/arrowBack";
-import { getImageTokenCount, getSubscriptionID, cancelSubscription, getSubscriptionDueDate, getSubscriptionUsage, getSubscriptionActive } from "../../backend/firestoreFunctions";
+import { getImageTokenCount, cancelSubscription, getSubscriptionDueDate, getSubscriptionUsage, getSubscriptionActive } from "../../backend/firestoreFunctions";
 import Modal from "../../components/Modal/Modal";
 import loadingAnimation from "../../animations/loading.json";
 import Lottie from "lottie-react";

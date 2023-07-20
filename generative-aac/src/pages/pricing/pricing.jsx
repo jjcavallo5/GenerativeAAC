@@ -3,7 +3,7 @@ import styles from "./pricing.module.css";
 import { useNavigate } from "react-router-dom";
 import IconArrowBackOutline from "../../icons/arrowBack";
 import LoginModal from "../../components/Modal/LoginModal";
-import { getSubscriptionActive, getSubscriptionID } from "../../backend/firestoreFunctions";
+import { getSubscriptionActive } from "../../backend/firestoreFunctions";
 import Modal from "../../components/Modal/Modal";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 
