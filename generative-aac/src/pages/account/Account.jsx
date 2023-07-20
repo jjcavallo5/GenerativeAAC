@@ -6,6 +6,7 @@ import { getImageTokenCount, getSubscriptionID, cancelSubscription, getSubscript
 import Modal from "../../components/Modal/Modal";
 import loadingAnimation from "../../animations/loading.json";
 import Lottie from "lottie-react";
+import { onAuthStateChanged, getAuth } from "firebase/auth";
 
 function AccountPage() {
     const [isSubscriber, setIsSubscriber] = useState(false);
@@ -16,6 +17,7 @@ function AccountPage() {
     const [subscriptionDue, setSubscriptionDue] = useState(0)
     const [subscriptionUsage, setSubscriptionUsage] = useState(0)
     const navigate = useNavigate();
+    const auth = getAuth()
 
     const handleSubscriptionCancel = () => {
         setLoading(true)
@@ -32,20 +34,26 @@ function AccountPage() {
     }
 
     useEffect(() => {
-        getImageTokenCount().then((tokens) => setAccountTokens(tokens));
-        getSubscriptionID()
-            .then((subID) => {
-                if (subID !== undefined) setIsSubscriber(true);
-                else setIsSubscriber(false)
-            })
-            .catch((error) => setIsSubscriber(false));
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                getImageTokenCount().then((tokens) => setAccountTokens(tokens));
+                getSubscriptionID()
+                    .then((subID) => {
+                        if (subID) setIsSubscriber(true);
+                        else setIsSubscriber(false)
+                    })
+                    .catch((error) => setIsSubscriber(false));
+            } else {
+                navigate('/')
+            }
+        });
 
         if (isSubscriber && !cancelled) {
             console.log("Sub")
             getSubscriptionDueDate().then(due => setSubscriptionDue(due))
             getSubscriptionUsage().then(usage => setSubscriptionUsage(usage))
         }
-    }, [cancelled, isSubscriber]);
+    }, [cancelled, isSubscriber, auth, navigate]);
 
     return (
         <div className={styles.pageContainer}>
