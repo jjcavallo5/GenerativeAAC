@@ -237,9 +237,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
-.loadingContainer span {
+.loadingText {
     font-size: 0.8rem;
     color: var(--text_alpha);
 }
@@ -247,6 +248,27 @@
 .loadingAnimation {
     height: 10rem;
     aspect-ratio: 1;
+}
+
+.takingTooLong {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--accent);
+}
+
+.takingTooLong:hover {
+    cursor: pointer;
+}
+
+.tooltip {
+    background-color: #000000ee;
+    width: 200px;
+    position: absolute;
+    z-index: 1;
+    font-size: 0.8rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    bottom: 1rem;
 }
 
 .examplesContainer {

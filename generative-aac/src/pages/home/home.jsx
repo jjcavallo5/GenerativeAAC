@@ -34,6 +34,7 @@ function HomePage() {
     const [loginModalActive, setLoginModalActive] = useState(false);
     const [accountTokens, setAccountTokens] = useState(0);
     const [isSubscriber, setIsSubscriber] = useState(false);
+    const [tooltipActive, setTooltipActive] = useState(false)
 
     const windowSize = useRef(window.innerWidth);
     const [navOverlayShown, setNavOverlayShown] = useState(false);
@@ -150,7 +151,10 @@ function HomePage() {
     }, [auth, isLoggedIn]);
 
     return (
-        <div className={styles.pageContainer} onClick={() => setNavOverlayShown(false)}>
+        <div className={styles.pageContainer} onClick={() => {
+            setNavOverlayShown(false)
+            setTooltipActive(false)
+        }}>
             <LoginModal active={loginModalActive} deactivate={() => setLoginModalActive(false)} />
             {collapsedSidebar ? null : (
                 <div className={styles.sidebar}>
@@ -287,7 +291,23 @@ function HomePage() {
                             loop={true}
                             className={styles.loadingAnimation}
                         />
-                        <span>Loading the model may take a few minutes</span>
+                        <span className={styles.loadingText}>Loading the model may take a few minutes</span>
+                        <span className={styles.takingTooLong} 
+                        onClick={(e) => {
+                            setTooltipActive(true)
+                            e.stopPropagation()
+                            }}>
+                                Why is it taking so long?
+                        </span>
+                        {tooltipActive &&
+                            <div className={styles.tooltip}>
+                                <p>
+                                    Our model is hosted on HuggingFace, which hosts thousands of models.
+                                    If our model hasn't been used for a while, HuggingFace has to reload
+                                    it into memory before it can begin a computation.
+                                </p>
+                            </div>
+                        }
                     </div>
                 )}
                 {fromHF !== "" && (
