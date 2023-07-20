@@ -214,6 +214,14 @@ def webhook():
         ref = db.collection("users").document(doc)
         ref.update({"imageTokenCount": firestore.Increment(incrementBy)})
 
+    elif event and event['type'] == 'setup_intent.succeeded':
+        customer = event['data']['object']['customer']
+
+        email = stripe.Customer.retrieve(customer)['email']
+
+        ref = db.collection("users").document(email)
+        ref.update({"subscriptionActive": True})
+
     elif event['type'] == 'invoice.paid':
         if event.data.object.total == 0:
             print("Total of 0 success")
@@ -235,7 +243,8 @@ def webhook():
 
         ref.update({
             "subscriptionID": firestore.DELETE_FIELD,
-            "subscriptionItemID": firestore.DELETE_FIELD
+            "subscriptionItemID": firestore.DELETE_FIELD,
+            "subscriptionActive": False
         })
 
         db.collection("subscriptions").document(subItemID).delete()
@@ -251,5 +260,5 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=log_usage_daily, trigger="interval", hours=24)
     scheduler.start()
-    # app.run(port=4242)
-    app.run()
+    app.run(port=4242)
+    # app.run()

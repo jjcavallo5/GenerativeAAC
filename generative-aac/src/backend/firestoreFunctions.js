@@ -95,7 +95,8 @@ export const storeSubscriptionID = async (subscriptionID, subscriptionItemID) =>
 
     updateDoc(docRef, {
         subscriptionID: subscriptionID,
-        subscriptionItemID: subscriptionItemID
+        subscriptionItemID: subscriptionItemID,
+        subscriptionActive: false
     }).then((snap) => console.log("Added subscription ID"));
 };
 
@@ -114,6 +115,14 @@ export const getSubscriptionID = async () => {
     const docSnap = await getDoc(docRef);
     return docSnap.get("subscriptionID");
 };
+
+export const getSubscriptionActive = async () => {
+    let userEmail = getCurrentUserEmail();
+    let docRef = doc(db, "users", userEmail);
+
+    const docSnap = await getDoc(docRef);
+    return docSnap.get("subscriptionActive");
+}
 
 export const getSubscriptionUsage = async () => {
     let subItemID = await getSubscriptionItemID()

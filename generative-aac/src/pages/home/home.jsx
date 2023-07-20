@@ -10,6 +10,7 @@ import {
     getImageTokenCount,
     getSubscriptionID,
     incrementSubscriptionUsage,
+    getSubscriptionActive,
 } from "../../backend/firestoreFunctions";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { deleteImage } from "../../backend/storageFunctions";
@@ -136,9 +137,9 @@ function HomePage() {
                     .then((queries) => setPreviousQueries(queries))
                     .catch((error) => console.error(error));
                 getImageTokenCount().then((tokens) => setAccountTokens(tokens));
-                getSubscriptionID()
-                    .then((subID) => {
-                        if (subID) setIsSubscriber(true);
+                getSubscriptionActive()
+                    .then((active) => {
+                        if (active) setIsSubscriber(true);
                         else setIsSubscriber(false)
                     })
                     .catch((error) => setIsSubscriber(false));

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Account.module.css";
 import IconArrowBackOutline from "../../icons/arrowBack";
-import { getImageTokenCount, getSubscriptionID, cancelSubscription, getSubscriptionDueDate, getSubscriptionUsage } from "../../backend/firestoreFunctions";
+import { getImageTokenCount, getSubscriptionID, cancelSubscription, getSubscriptionDueDate, getSubscriptionUsage, getSubscriptionActive } from "../../backend/firestoreFunctions";
 import Modal from "../../components/Modal/Modal";
 import loadingAnimation from "../../animations/loading.json";
 import Lottie from "lottie-react";
@@ -37,9 +37,9 @@ function AccountPage() {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 getImageTokenCount().then((tokens) => setAccountTokens(tokens));
-                getSubscriptionID()
-                    .then((subID) => {
-                        if (subID) setIsSubscriber(true);
+                getSubscriptionActive()
+                    .then((active) => {
+                        if (active) setIsSubscriber(true);
                         else setIsSubscriber(false)
                     })
                     .catch((error) => setIsSubscriber(false));

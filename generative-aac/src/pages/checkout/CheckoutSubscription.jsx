@@ -57,7 +57,7 @@ export default function CheckoutSubscription() {
             elements,
             clientSecret,
             confirmParams: {
-                return_url: "http://localhost:3000/success",
+                return_url: "https://generativeaac.com/success",
             },
         });
         
