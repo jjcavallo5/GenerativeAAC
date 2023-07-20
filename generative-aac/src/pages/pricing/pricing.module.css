@@ -10,6 +10,21 @@
     min-height: 100vh;
 }
 
+.pageContainerHidden {
+    
+    background-color: var(--background);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    position: relative;
+    flex-direction: column;
+
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+}
+
 .headerContainer {
     position: relative;
     display: flex;

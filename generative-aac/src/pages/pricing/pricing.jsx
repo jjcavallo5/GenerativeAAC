@@ -34,7 +34,7 @@ const PricingPage = () => {
     }, [auth]);
 
     return (
-        <div className={styles.pageContainer}>
+        <div className={loginModalActive ? styles.pageContainerHidden : styles.pageContainer}>
             <LoginModal active={loginModalActive} deactivate={() => setLoginModalActive(false)} />
 
             <Modal active={isSubscriberModalActive} deactivate={() => setIsSubscriberModalActive(false)}>
