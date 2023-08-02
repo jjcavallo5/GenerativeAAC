@@ -24,7 +24,11 @@ const LoginModal = (props) => {
         } catch (error) {
             if (error.code === "auth/invalid-email") setErrorMessage("Invalid email");
             else if (error.code === "auth/user-not-found") setErrorMessage("Invalid credentials");
-            else setErrorMessage(error.message);
+            else if (error.code === "auth/wrong-password") setErrorMessage("Invalid credentials");
+            else {
+                setErrorMessage('An error occurred');
+                console.error(error.message)
+            }
         }
     };
 
