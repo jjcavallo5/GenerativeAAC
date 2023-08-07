@@ -21,6 +21,7 @@ import IconMenuFold from "../../icons/menuFold";
 import IconMenuUnfold from "../../icons/menuUnfold";
 import ExampleImage from "../../components/ExampleImage/ExampleImage";
 import LoginModal from "../../components/Modal/LoginModal";
+import Logo from "../../icons/logo";
 
 function HomePage() {
     const [prompt, setPrompt] = useState("");
