@@ -129,8 +129,13 @@ def update_usage(subscription_id, usage_quantity):
             subscription_id,
             quantity=usage_quantity,
             timestamp=timestamp,
-            action='set',
+            action='increment',
         )
+
+        item_id = subscription_id
+        ref = db.collection("subscription").document(item_id)
+        ref.update({"subscriptionUsage": 0})
+        print("Reset Usage")
 
     except stripe.error.StripeError as e:
         print('Usage report failed for item ID %s with idempotency key: %s' %
