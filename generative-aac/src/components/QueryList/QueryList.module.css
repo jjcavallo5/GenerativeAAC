@@ -1,0 +1,57 @@
+.oldQueryList {
+    width: 100%;
+    height: calc(100% - 5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+}
+
+.oldQueriesHeaderContainer {
+    width: 90%;
+}
+
+.oldQueriesHeader {
+    color: #ebebf088;
+    text-align: left;
+    font-size: 0.8rem;
+}
+
+.searchContainer {
+    padding: 0.5rem 0 0.5rem 0;
+    position: relative;
+}
+
+.searchBar {
+    background-color: var(--background);
+    outline: none;
+    border: none;
+    color: var(--text);
+    padding: 0.5rem;
+    font-size: 1rem;
+    width: calc(100% - 1rem);
+    border-radius: 10px;
+}
+
+.scrollable {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.clearSearchContainer {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1rem;
+    aspect-ratio: 1;
+    color: var(--text);
+}
+
+
+.clearSearchContainer:hover .clearSearch{
+    color: var(--accent);
+    cursor: pointer;
+}

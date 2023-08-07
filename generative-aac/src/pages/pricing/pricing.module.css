@@ -10,6 +10,21 @@
     min-height: 100vh;
 }
 
+.pageContainerHidden {
+    
+    background-color: var(--background);
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    position: relative;
+    flex-direction: column;
+
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+
+}
+
 .headerContainer {
     position: relative;
     display: flex;
@@ -28,6 +43,29 @@ h1 {
 .errorMessage {
     align-self: center;
     color: red;
+}
+
+.isSubscriberModalContainer {
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: var(--background);
+    color: var(--text);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.isSubscriberModalContainer p{
+    margin-top: 0;
+    color: var(--text_alpha);
+}
+
+.isSubscriberModalContainer div {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .pricingContainer {

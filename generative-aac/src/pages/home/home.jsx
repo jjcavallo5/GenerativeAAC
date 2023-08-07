@@ -8,14 +8,14 @@ import {
     deleteImageFromList,
     decrementImageTokens,
     getImageTokenCount,
-    getSubscriptionID,
     incrementSubscriptionUsage,
+    getSubscriptionActive,
 } from "../../backend/firestoreFunctions";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { deleteImage } from "../../backend/storageFunctions";
-import OldQuery from "../../components/OldQueries/OldQuery";
 import loadingAnimation from "../../animations/loading.json";
 import Lottie from "lottie-react";
+import QueryList from "../../components/QueryList/QueryList";
 
 import IconMenuFold from "../../icons/menuFold";
 import IconMenuUnfold from "../../icons/menuUnfold";
@@ -34,6 +34,7 @@ function HomePage() {
     const [loginModalActive, setLoginModalActive] = useState(false);
     const [accountTokens, setAccountTokens] = useState(0);
     const [isSubscriber, setIsSubscriber] = useState(false);
+    const [tooltipActive, setTooltipActive] = useState(false)
 
     const windowSize = useRef(window.innerWidth);
     const [navOverlayShown, setNavOverlayShown] = useState(false);
@@ -132,49 +133,28 @@ function HomePage() {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 setIsLoggedIn(true);
+
+                getSavedQueries()
+                    .then((queries) => setPreviousQueries(queries))
+                    .catch((error) => console.error(error));
+                getImageTokenCount().then((tokens) => setAccountTokens(tokens));
+                getSubscriptionActive()
+                    .then((active) => {
+                        if (active) setIsSubscriber(true);
+                        else setIsSubscriber(false)
+                    })
+                    .catch((error) => setIsSubscriber(false));
             } else {
                 setIsLoggedIn(false);
             }
         });
-
-        if (isLoggedIn) {
-            getSavedQueries()
-                .then((queries) => setPreviousQueries(queries))
-                .catch((error) => console.error(error));
-            getImageTokenCount().then((tokens) => setAccountTokens(tokens));
-            getSubscriptionID()
-                .then((subID) => {
-                    if (subID) setIsSubscriber(true);
-                })
-                .catch((error) => setIsSubscriber(false));
-        }
     }, [auth, isLoggedIn]);
 
-    const QueryList = () => {
-        return (
-            <div className={styles.oldQueryList}>
-                <div className={styles.oldQueriesHeaderContainer}>
-                    <p className={styles.oldQueriesHeader}>Previous</p>
-                </div>
-                <div className={styles.scrollable}>
-                    {previousQueries.map((query, i) => {
-                        return (
-                            <OldQuery
-                                query={query}
-                                onSelect={handleOldQuerySelection}
-                                onDeleteSelected={handleDeleteOldQuery}
-                                isSelected={selectedQuery === query.url}
-                                key={i}
-                            />
-                        );
-                    })}
-                </div>
-            </div>
-        );
-    };
-
     return (
-        <div className={styles.pageContainer} onClick={() => setNavOverlayShown(false)}>
+        <div className={styles.pageContainer} onClick={() => {
+            setNavOverlayShown(false)
+            setTooltipActive(false)
+        }}>
             <LoginModal active={loginModalActive} deactivate={() => setLoginModalActive(false)} />
             {collapsedSidebar ? null : (
                 <div className={styles.sidebar}>
@@ -190,7 +170,12 @@ function HomePage() {
                         </div>
                     )}
                     {isLoggedIn ? (
-                        <QueryList />
+                        <QueryList 
+                            handleOldQuerySelection={handleOldQuerySelection}
+                            handleDeleteOldQuery={handleDeleteOldQuery}
+                            selectedQuery={selectedQuery}
+                            previousQueries={previousQueries}
+                        />
                     ) : (
                         <p className={styles.notLoggedIn}>Log in to save prompts</p>
                     )}
@@ -248,7 +233,7 @@ function HomePage() {
 
                             {isLoggedIn && !isSubscriber && (
                                 <span className={styles.tokenCountText}>
-                                    Account Tokens: {accountTokens}
+                                    Image Tokens: {accountTokens}
                                 </span>
                             )}
                             {isLoggedIn && isSubscriber && (
@@ -306,7 +291,23 @@ function HomePage() {
                             loop={true}
                             className={styles.loadingAnimation}
                         />
-                        <span>Loading the model may take a few minutes</span>
+                        <span className={styles.loadingText}>Loading the model may take a few minutes</span>
+                        <span className={styles.takingTooLong} 
+                        onClick={(e) => {
+                            setTooltipActive(true)
+                            e.stopPropagation()
+                            }}>
+                                Why is it taking so long?
+                        </span>
+                        {tooltipActive &&
+                            <div className={styles.tooltip}>
+                                <p>
+                                    Our model is hosted on HuggingFace, which hosts thousands of models.
+                                    If our model hasn't been used for a while, HuggingFace has to reload
+                                    it into memory before it can begin a computation.
+                                </p>
+                            </div>
+                        }
                     </div>
                 )}
                 {fromHF !== "" && (

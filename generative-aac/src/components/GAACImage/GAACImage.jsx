@@ -26,6 +26,7 @@ const GAACImage = (props) => {
                 href={props.src}
                 download={"generativeAAC"}
                 target="_blank"
+                rel="noreferrer"
             >
                 Download
             </a>

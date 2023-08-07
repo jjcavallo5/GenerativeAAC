@@ -84,18 +84,28 @@ export const getSavedQueries = async () => {
     return docSnap.get("imageURLs").reverse();
 };
 
-export const storeSubscriptionID = async (subscriptionID) => {
+export const storeSubscriptionID = async (subscriptionID, subscriptionItemID) => {
     let userEmail = getCurrentUserEmail();
     let docRef = doc(db, "users", userEmail);
 
-    await setDoc(doc(db, "subscriptions", subscriptionID), {
+    await setDoc(doc(db, "subscriptions", subscriptionItemID), {
         email: userEmail,
         subscriptionUsage: 0,
     });
 
     updateDoc(docRef, {
         subscriptionID: subscriptionID,
+        subscriptionItemID: subscriptionItemID,
+        subscriptionActive: false
     }).then((snap) => console.log("Added subscription ID"));
+};
+
+export const getSubscriptionItemID = async () => {
+    let userEmail = getCurrentUserEmail();
+    let docRef = doc(db, "users", userEmail);
+
+    const docSnap = await getDoc(docRef);
+    return docSnap.get("subscriptionItemID");
 };
 
 export const getSubscriptionID = async () => {
@@ -106,11 +116,61 @@ export const getSubscriptionID = async () => {
     return docSnap.get("subscriptionID");
 };
 
+export const getSubscriptionActive = async () => {
+    let userEmail = getCurrentUserEmail();
+    let docRef = doc(db, "users", userEmail);
+
+    const docSnap = await getDoc(docRef);
+    return docSnap.get("subscriptionActive");
+}
+
+export const getSubscriptionUsage = async () => {
+    let subItemID = await getSubscriptionItemID()
+    let docRef = doc(db, "subscriptions", subItemID);
+
+    const docSnap = await getDoc(docRef);
+    return docSnap.get("subscriptionUsage");
+
+}
+
 export const incrementSubscriptionUsage = async () => {
-    let subscriptionID = await getSubscriptionID();
+    let subscriptionID = await getSubscriptionItemID();
     let docRef = doc(db, "subscriptions", subscriptionID);
 
     updateDoc(docRef, {
         subscriptionUsage: increment(1),
     }).then((snap) => console.log("Incremented"));
 };
+
+export const cancelSubscription = async () => {
+    let subID = await getSubscriptionID()
+    let subItemID = await getSubscriptionItemID()
+    await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/cancel-subscription`, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            subscriptionId: subID,
+            subscriptionItemID: subItemID
+        }),
+    })
+}
+
+export const getSubscriptionDueDate = async () => {
+    let subID = await getSubscriptionID()
+
+    let response = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/get-subscription-due-date`, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            subscriptionId: subID
+        }),
+    })
+
+    response = await response.json()
+
+    return response.date
+}

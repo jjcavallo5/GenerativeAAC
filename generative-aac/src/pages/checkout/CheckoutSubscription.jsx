@@ -4,7 +4,6 @@ import { getCurrentUserEmail } from "../../backend/authFunctions";
 import { storeSubscriptionID } from "../../backend/firestoreFunctions";
 import styles from "./CheckoutForm.module.css";
 
-import Modal from "../../components/Modal/Modal";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../animations/loading.json";
 
@@ -43,25 +42,25 @@ export default function CheckoutSubscription() {
         // Create the Subscription
         let data = { email: getCurrentUserEmail() };
         console.log(data);
-        const res = await fetch("http://localhost:4242/create-subscription", {
+        const res = await fetch(`${process.env.REACT_APP_SERVER_DOMAIN}/create-subscription`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
         });
 
-        const { subscriptionId, clientSecret } = await res.json();
+        const { subscriptionID, subscriptionItemId, clientSecret } = await res.json();
 
-        storeSubscriptionID(subscriptionId);
+        storeSubscriptionID(subscriptionID, subscriptionItemId);
 
         // Confirm the Subscription using the details collected by the Payment Element
         const { error } = await stripe.confirmSetup({
             elements,
             clientSecret,
             confirmParams: {
-                return_url: "http://localhost:3000/success",
+                return_url: "https://generativeaac.com/success",
             },
         });
-
+        
         if (error) {
             // This point is only reached if there's an immediate error when
             // confirming the payment. Show the error to your customer (for example, payment details incomplete)
